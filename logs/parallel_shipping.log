@@ -1,0 +1,53 @@
+================================================================
+PM Work Order Scraper
+================================================================
+Chrome must be running via start_chrome_debug.bat
+================================================================
+
+Attaching to Chrome at 127.0.0.1:9227 ...
+Traceback (most recent call last):
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 1388, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 1383, in main
+    scraper.run(limit=args.limit, department=args.department,
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                equipment_ids=args.equipment_ids)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 1255, in run
+    self.attach()
+    ~~~~~~~~~~~^^
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 668, in attach
+    print(f"Attached. Current URL: {self.driver.current_url}")
+                                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 626, in current_url
+    return self.execute(Command.GET_CURRENT_URL)["value"]
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 492, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+

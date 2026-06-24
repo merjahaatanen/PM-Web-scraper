@@ -1,0 +1,2699 @@
+================================================================
+PM Work Order Scraper
+================================================================
+Chrome must be running via start_chrome_debug.bat
+================================================================
+
+Attaching to Chrome at 127.0.0.1:9226 ...
+Attached. Current URL: None
+Loaded 57 'Machine Shop' equipment from equipment_data.csv
+
+Scraping 57 equipment records...
+
+[1/57] EQ ID 5248
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[2/57] EQ ID 5244
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[3/57] EQ ID 1721
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[4/57] EQ ID 1796
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[5/57] EQ ID 159
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[6/57] EQ ID 160
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[7/57] EQ ID 163
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[8/57] EQ ID 166
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[9/57] EQ ID 167
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[10/57] EQ ID 177
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[11/57] EQ ID 179
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[12/57] EQ ID 1492
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[13/57] EQ ID 127
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[14/57] EQ ID 132
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[15/57] EQ ID 133
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[16/57] EQ ID 19
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[17/57] EQ ID 20
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[18/57] EQ ID 21
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[19/57] EQ ID 22
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[20/57] EQ ID 45
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[21/57] EQ ID 46
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[22/57] EQ ID 49
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[23/57] EQ ID 50
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[24/57] EQ ID 71
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[25/57] EQ ID 109
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+Saved 0 unscheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_unscheduled_machine_shop.csv
+Saved 0 scheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_scheduled_machine_shop.csv
+[26/57] EQ ID 111
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[27/57] EQ ID 1020
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[28/57] EQ ID 1021
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[29/57] EQ ID 1022
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[30/57] EQ ID 1023
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[31/57] EQ ID 1031
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[32/57] EQ ID 1032
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[33/57] EQ ID 1033
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[34/57] EQ ID 1034
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[35/57] EQ ID 1035
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[36/57] EQ ID 1036
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[37/57] EQ ID 1037
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[38/57] EQ ID 1038
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[39/57] EQ ID 1039
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[40/57] EQ ID 1040
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[41/57] EQ ID 1041
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[42/57] EQ ID 1042
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[43/57] EQ ID 1043
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[44/57] EQ ID 1045
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[45/57] EQ ID 1046
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[46/57] EQ ID 1047
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[47/57] EQ ID 1048
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[48/57] EQ ID 1049
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[49/57] EQ ID 1050
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[50/57] EQ ID 1051
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+Saved 0 unscheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_unscheduled_machine_shop.csv
+Saved 0 scheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_scheduled_machine_shop.csv
+[51/57] EQ ID 1052
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[52/57] EQ ID 1053
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[53/57] EQ ID 1054
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[54/57] EQ ID 1055
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[55/57] EQ ID 1056
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[56/57] EQ ID 1057
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+[57/57] EQ ID 1058
+  Error (unscheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: no such window: target window already closed
+from unknown error: web view not found
+  (Session info: chrome=149.0.7827.155)
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
+	chromedriver!(No symbol) [0x7ff64fc1793d]
+	chromedriver!(No symbol) [0x7ff64fbee362]
+	chromedriver!(No symbol) [0x7ff64fca1846]
+	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc6401c]
+	chromedriver!(No symbol) [0x7ff64fc64f43]
+	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+Saved 0 unscheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_unscheduled_machine_shop.csv
+Saved 0 scheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_scheduled_machine_shop.csv
+
+Done.

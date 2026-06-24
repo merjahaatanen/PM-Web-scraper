@@ -1,0 +1,341 @@
+equipment_id,equipment_eq_id,equipment_name,department,wo_id,audit_item,status,due_date,work_performed_by,labor_time,material_cost,downtime_hours,completed_datetime,comments,attachments
+5393,EQ ID 5393,Foam Soap Dispensers (at sinks),,19884,"• Remove Nozzle Tip with mesh screen and run under warm water.
+     • To remove Nozzle Tip for cleaning, cover the Sensor area with
+        your finger to prevent dispensing of soap. Turn Nozzle to the left to
+        loosen. Rinse Nozzle under hot water to loosen any soap residue and
+        replace. Turn Nozzle to the right to tighten
+• Place hand under Nozzle Tip to be sure soap is properly dispensed
+• Gently wipe the dispenser with a cloth moistened with warm water and a diluted
+neutral detergent
+• Clean area between Lid and Spout to keep Lid swing free of soap residue
+• Flush the system when minimal amount of soap is left in the bottle
+       • Open the top-fill door using the BobKey, rotate door clockwise
+       • Fill the dispenser with warm water.
+       • Press the Automatic Flush Button located on the bottom housing assembly, just
+          above the Partition Control Knob.
+       • Once unit is flushed, Press the Automatic Flush Button again to stop dispensing.
+       • Fill unit with fresh soap.
+• Place hand under Nozzle Tip to be sure soap is properly dispensed.
+
+I found this information online (Advisory Bulletin). https://www.bobrick.com/wp-content/uploads/TB-99.pdf
+
+NOTES:
+Please be concerned with the traffic on the sink usage, PM will take about ten to twenty mins for each unit. Depending on the soap amount inside the container.
+If possible, perform the PM partially to allow the traffic to use the other sink. 
+To save soap, it's best to perform the PM when the soap is at low level. Maybe early morning or late afternoon.",Closed and Completed,6/17/2026,"Colton, PU",0.00,0.00,0.00,6/19/2026,,[]
+5390,EQ ID 5390,Office Chairs,,19704,"Check the condition of the office chair arm pads. This includes all of the chairs inside of the conference, training and offices. Replace the arm pads as needed.",Pending,7/4/2026,,0.00,0.00,0.00,,,[]
+5390,EQ ID 5390,Office Chairs,,19439,"This includes all chairs in the building (open office, conference, office, training, lunch room, etc). 
+ALL CHAIRS:
+Check to make sure all hardware is tight 
+Check to see if there are signs of any cracking on the structural frame
+Check to make sure chairs are level (no rocking back and forth)
+Check cleanliness (stains, tears, etc)
+ROLLING CHAIRS:
+Clean and check casters as needed
+Make sure cylinder is working
+Check the tilt and other functions
+BREAK ROOM CHAIRS:
+Check the chairs feet (they are level and they have glides)
+Look for cracks or deforming",Closed and Completed,5/29/2026,Max,0.30,0.00,0.00,6/3/2026,"Maksim Bushka - 06/04/26  1:06:16 PM: Scheduled Date: 05/29/2026
+Parts Needed: NO
+Parts Ordered: NO
+Expected Delivery Date: N/A
+General Notes: Checked out ok",[]
+5390,EQ ID 5390,Office Chairs,,19438,"Check the condition of the office chair arm pads. This includes all of the chairs inside of the conference, training and offices. Replace the arm pads as needed.",Closed and Completed,5/29/2026,Max,0.30,0.00,0.00,6/3/2026,"Maksim Bushka - 06/04/26  1:04:43 PM: Scheduled Date: 05/29/2026
+Parts Needed: NO
+Parts Ordered: NO
+Expected Delivery Date: N/A
+General Notes: Checked up ok",[]
+36,EQ ID 36,Air compressor 75 HP,,29,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,4/18/2022,mike,0.50,0.00,0.00,4/7/2022,Miguel Diaz - 04/08/22  9:59:11 AM: checked unit all is working,[]
+36,EQ ID 36,Air compressor 75 HP,,2604,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,11/13/2022,Gardner denver,0.50,0.00,0.00,10/31/2022,Miguel Diaz - 11/07/22  7:33:40 AM: compressor was just serviced for an annual service,[]
+36,EQ ID 36,Air compressor 75 HP,,3134,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,12/7/2022,md,0.40,0.00,0.00,12/1/2022,"Miguel Diaz - 12/01/22  8:18:55 AM: checked e stop 
+checked oil level when on 
+removed and cleaned air filter",[]
+36,EQ ID 36,Air compressor 75 HP,,3387,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,1/1/2023,mike,0.50,0.00,0.00,1/2/2023,,[]
+36,EQ ID 36,Air compressor 75 HP,,3931,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,2/12/2023,md,0.00,0.00,0.00,1/23/2023,,[]
+36,EQ ID 36,Air compressor 75 HP,,4095,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,2/23/2023,md,0.50,0.00,0.00,2/10/2023,"Miguel Diaz - 02/10/23 11:24:21 AM: 1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",[]
+36,EQ ID 36,Air compressor 75 HP,,4312,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,3/10/2023,Mike ingersol rand tech,0.50,0.00,0.00,2/16/2023,"Miguel Diaz - 02/20/23  9:13:36 AM: Tech replaced separator and did a rebuilt kit 
+checked oil level 
+air filter was cleaned",[]
+36,EQ ID 36,Air compressor 75 HP,,4482,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,3/20/2023,Mike,0.50,0.00,0.00,3/17/2023,"Miguel Diaz - 03/17/23 10:55:16 AM: 1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .
+all working cleaned air filter",[]
+36,EQ ID 36,Air compressor 75 HP,,4873,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,4/17/2023,Miguel & Max,1.00,30.00,0.00,4/18/2023,Maksim Bushka - 04/18/23 10:04:29 AM: Check up all points. Cleaned up the filter and radiator. Added one quarts oil.,[]
+36,EQ ID 36,Air compressor 75 HP,,5360,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,5/18/2023,mike,0.00,0.00,0.00,5/10/2023,Miguel Diaz - 05/10/23 10:41:11 AM: This service was just done skipping this interval,[]
+36,EQ ID 36,Air compressor 75 HP,,5624,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,6/10/2023,Max,1.00,0.00,0.00,6/12/2023,Maksim Bushka - 06/12/23  8:35:30 AM: Checked up and cleaned up the filter and coil,[]
+36,EQ ID 36,Air compressor 75 HP,,5982,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,7/12/2023,Max,0.00,0.00,0.00,7/10/2023,Maksim Bushka - 07/10/23  8:36:28 AM: Serviced ok,[]
+36,EQ ID 36,Air compressor 75 HP,,6362,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,8/10/2023,Max,1.00,0.00,0.00,8/10/2023,Maksim Bushka - 08/10/23 10:33:21 AM: Serviced the compressor.,[]
+36,EQ ID 36,Air compressor 75 HP,,6784,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,9/10/2023,Max,1.00,50.00,0.00,9/7/2023,Maksim Bushka - 09/07/23 11:19:32 AM: Added oil around two quart.,[]
+36,EQ ID 36,Air compressor 75 HP,,7141,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,10/7/2023,Max,0.00,0.00,0.00,10/11/2023,,[]
+36,EQ ID 36,Air compressor 75 HP,,7579,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,11/11/2023,Max,1.00,0.00,0.00,11/7/2023,Maksim Bushka - 11/07/23 10:15:55 AM: Performed regular maintenance.,[]
+36,EQ ID 36,Air compressor 75 HP,,7942,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,12/7/2023,Max,1.00,0.00,0.00,11/8/2023,,[]
+36,EQ ID 36,Air compressor 75 HP,,8128,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,12/27/2023,Max,1.00,0.00,0.00,1/2/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,9504,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,2/2/2024,Max,1.00,0.00,0.00,1/31/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,10208,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,3/2/2024,Max,1.00,0.00,0.00,3/1/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,30,"Major Service; Every 24th-Month $3,805 Per Visit
+? Same As The Above Minor Service
+? Replace Air/Oil Separator Element
+? Replace Ultra Coolant Compressor Lubricant
+? Grease Fan & Main Motor Bearings (If applicable)
+? Advise of Any Issues",Closed and Completed,3/18/2024,Max,1.00,0.00,0.00,3/4/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,10600,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,4/1/2024,Max,0.45,0.00,0.00,4/1/2024,Maksim Bushka - 04/01/24  2:47:31 PM: Replaced 4 rollers on a drywall cart.,[]
+36,EQ ID 36,Air compressor 75 HP,,10883,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,5/1/2024,Max,1.00,0.00,0.00,4/30/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,11476,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,5/30/2024,Max,0.00,0.00,0.00,5/14/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,11906,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,6/30/2024,Max,0.30,0.00,0.00,6/6/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,12064,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,7/10/2024,Max,1.00,0.00,0.00,7/9/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,12368,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,8/12/2024,Max & Primo,1.00,0.00,0.00,8/6/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,12681,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,9/6/2024,Max & Primo,1.00,0.00,0.00,9/5/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,12984,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,10/6/2024,Max,1.00,0.00,0.00,10/14/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,13405,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,11/14/2024,Max,1.00,0.00,0.00,10/29/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,13914,"*User water hose and water down coils from inside out every 6 months .
+This will prevent the machine from over heating",Closed and Completed,11/25/2024,Max,1.00,0.00,0.00,12/2/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,13639,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,11/29/2024,Max,1.00,0.00,0.00,12/2/2024,,[]
+36,EQ ID 36,Air compressor 75 HP,,13943,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,1/2/2025,Max,1.00,0.00,0.00,1/7/2025,Maksim Bushka - 01/07/25  1:50:49 PM: Replaced 4 AA batteries,[]
+36,EQ ID 36,Air compressor 75 HP,,14282,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,2/7/2025,Max,1.00,0.00,0.00,2/3/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,14611,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,3/7/2025,Max,1.00,0.00,0.00,3/3/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,14925,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,4/3/2025,Max,1.00,0.00,0.00,4/1/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,15257,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,5/2/2025,Max,1.00,0.00,0.00,5/2/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,13942,"*User water hose and water down coils from inside out every 6 months .
+This will prevent the machine from over heating",Closed and Completed,6/2/2025,Max,1.00,0.00,0.00,5/8/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,15652,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,6/6/2025,Primo & Max,2.00,0.00,0.00,6/12/2025,Maksim Bushka - 06/12/25  3:13:37 PM: Cleaned up with washer pressure.,[]
+36,EQ ID 36,Air compressor 75 HP,,16070,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,7/12/2025,Max,1.00,0.00,0.00,7/11/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,16414,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,8/15/2025,Max,0.30,0.00,0.00,8/13/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,16755,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed without Action,9/20/2025,Max,0.00,0.00,0.00,9/8/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,16934,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,10/8/2025,Max,0.00,0.00,0.00,9/30/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,17101,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed and Completed,10/30/2025,Max,0.00,0.00,0.00,10/21/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,15748,"*User water hose and water down coils from inside out every 6 months .
+This will prevent the machine from over heating",Closed without Action,11/14/2025,Max,0.00,0.00,0.00,10/31/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,17398,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed without Action,11/21/2025,Max,0.00,0.00,0.00,11/19/2025,,[]
+36,EQ ID 36,Air compressor 75 HP,,17747,"(1) Check Safety Devices (Red E-stop button)
+(2) Check Separator Differ. Indicator (Listen for blow by)
+(3) Check Sump Oil Level-Warm (Check gauge Arrow pointed towards the green)
+(4) Check Air filter (make sure  unit is off  before checking filter)
+Open side cover & remove and blow off. (Check for foreign matter)
+(5) Check radiator. Make sure it's clean and blow off if needed .",Closed without Action,12/19/2025,Sean Jennings,0.00,0.00,0.00,12/22/2025,Sean Jennings - 12/22/25 10:04:00 AM: Equipment is no longer operational. Will delete work orders associated with this piece of equipment once it is removed from the facility.,[]
+36,EQ ID 36,Air compressor 75 HP,,10644,"Major Service; Every 24th-Month $3,805 Per Visit
+? Same As The Above Minor Service
+? Replace Air/Oil Separator Element
+? Replace Ultra Coolant Compressor Lubricant
+? Grease Fan & Main Motor Bearings (If applicable)
+? Advise of Any Issues",Closed and Completed,3/5/2026,Sean,0.00,0.00,0.00,3/12/2026,Sean Jennings - 03/12/26 12:13:17 PM: Scrapped on 1/26/2026,[]
+36,EQ ID 36,Air compressor 75 HP,,17532,"*User water hose and water down coils from inside out every 6 months .
+This will prevent the machine from over heating",Closed without Action,4/30/2026,Max,0.00,0.00,0.00,5/5/2026,Maksim Bushka - 05/05/26  3:10:06 PM: We have replaced that compressor.,[]

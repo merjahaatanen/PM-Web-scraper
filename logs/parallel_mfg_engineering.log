@@ -1,0 +1,46 @@
+================================================================
+PM Work Order Scraper
+================================================================
+Chrome must be running via start_chrome_debug.bat
+================================================================
+
+Attaching to Chrome at 127.0.0.1:9228 ...
+Attached. Current URL: https://circaweb.bobrick.com/PME/Forms/EquipmentAll
+Loaded 10 'Mfg Engineering' equipment from equipment_data.csv
+
+Scraping 10 equipment records...
+
+[1/10] EQ ID 5325
+  [EQ ID 5325] 'General Request': 8 work orders scraped
+  [EQ ID 5325] 0 scheduled work orders
+[2/10] EQ ID 2099
+  [EQ ID 2099] 0 unscheduled work orders
+  [EQ ID 2099] 0 scheduled work orders
+[3/10] EQ ID 2100
+  [EQ ID 2100] 0 unscheduled work orders
+  [EQ ID 2100] 0 scheduled work orders
+[4/10] EQ ID 1727
+  [EQ ID 1727] 0 unscheduled work orders
+  [EQ ID 1727] 0 scheduled work orders
+[5/10] EQ ID 1804
+  [EQ ID 1804] 0 unscheduled work orders
+  [EQ ID 1804] 0 scheduled work orders
+[6/10] EQ ID 120
+  [EQ ID 120] 0 unscheduled work orders
+  [EQ ID 120] 'Assembly Machine 2111/12': 17 scheduled work orders scraped
+[7/10] EQ ID 137
+  [EQ ID 137] 'ME Support Request': 3 work orders scraped
+  [EQ ID 137] 'ME Support Request': 2 scheduled work orders scraped
+[8/10] EQ ID 146
+  [EQ ID 146] 0 unscheduled work orders
+  [EQ ID 146] 0 scheduled work orders
+[9/10] EQ ID 66
+  [EQ ID 66] 0 unscheduled work orders
+  [EQ ID 66] '2111, 2112 Can Cleaner': 4 scheduled work orders scraped
+[10/10] EQ ID 112
+  [EQ ID 112] 0 unscheduled work orders
+  [EQ ID 112] 0 scheduled work orders
+Saved 11 unscheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_unscheduled_mfg_engineering.csv
+Saved 23 scheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_scheduled_mfg_engineering.csv
+
+Done.

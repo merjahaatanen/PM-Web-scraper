@@ -1,0 +1,28 @@
+================================================================
+PM Work Order Scraper
+================================================================
+Chrome must be running via start_chrome_debug.bat
+================================================================
+
+Attaching to Chrome at 127.0.0.1:9229 ...
+Attached. Current URL: https://circaweb.bobrick.com/PME/Forms/EquipmentAll
+Loaded 4 'General' equipment from equipment_data.csv
+
+Scraping 4 equipment records...
+
+[1/4] EQ ID 1977
+  [EQ ID 1977] 0 unscheduled work orders
+  [EQ ID 1977] 0 scheduled work orders
+[2/4] EQ ID 1978
+  [EQ ID 1978] 0 unscheduled work orders
+  [EQ ID 1978] 0 scheduled work orders
+[3/4] EQ ID 744
+  [EQ ID 744] 'General Maintenace Requests': 212 work orders scraped
+  [EQ ID 744] 0 scheduled work orders
+[4/4] EQ ID 1354
+  [EQ ID 1354] 0 unscheduled work orders
+  [EQ ID 1354] 'Pilfergard Door alarms': 8 scheduled work orders scraped
+Saved 212 unscheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_unscheduled_general.csv
+Saved 8 scheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_scheduled_general.csv
+
+Done.
