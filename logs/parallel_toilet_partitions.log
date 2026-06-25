@@ -5,6 +5,10 @@ Chrome must be running via start_chrome_debug.bat
 ================================================================
 
 Attaching to Chrome at 127.0.0.1:9225 ...
+
+ERROR: Cannot attach to Chrome.
+Run start_chrome_debug.bat first (close all other Chrome windows).
+
 Traceback (most recent call last):
   File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 1388, in <module>
     main()
@@ -17,27 +21,49 @@ Traceback (most recent call last):
   File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 1255, in run
     self.attach()
     ~~~~~~~~~~~^^
-  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 668, in attach
-    print(f"Attached. Current URL: {self.driver.current_url}")
-                                    ^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 626, in current_url
-    return self.execute(Command.GET_CURRENT_URL)["value"]
-           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 667, in attach
+    raise e
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 663, in attach
+    self.driver = webdriver.Chrome(service=svc, options=opts)
+                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 45, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        browser_name=DesiredCapabilities.CHROME["browserName"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        keep_alive=keep_alive,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 66, in __init__
+    super().__init__(command_executor=executor, options=self.options)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\common\webdriver.py", line 25, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 300, in __init__
+    self.start_session(capabilities)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 396, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 492, in execute
     self.error_handler.check_response(response)
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
   File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
     raise exception_class(message, screen, stacktrace)
-selenium.common.exceptions.NoSuchWindowException: Message: no such window: target window already closed
-from unknown error: web view not found
-  (Session info: chrome=149.0.7827.155)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: cannot connect to chrome at 127.0.0.1:9225
+from chrome not reachable; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#sessionnotcreatedexception
 Stacktrace:
 	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
 	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
-	chromedriver!(No symbol) [0x7ff64fc1793d]
-	chromedriver!(No symbol) [0x7ff64fbee362]
-	chromedriver!(No symbol) [0x7ff64fca1846]
-	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc17726]
+	chromedriver!(No symbol) [0x7ff64fc07e81]
+	chromedriver!(No symbol) [0x7ff64fc5f8a5]
+	chromedriver!(No symbol) [0x7ff64fc53c6e]
+	chromedriver!(No symbol) [0x7ff64fca85f1]
+	chromedriver!(No symbol) [0x7ff64fca7e56]
 	chromedriver!(No symbol) [0x7ff64fc6401c]
 	chromedriver!(No symbol) [0x7ff64fc64f43]
 	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
