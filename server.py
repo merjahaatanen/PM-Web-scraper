@@ -16,6 +16,7 @@ It reuses the stats / prompt / Ollama logic from analyze_equipment.py (including
 the Windows-TLS PowerShell transport, since the corporate network blocks the
 OpenSSL-based TLS that Python would otherwise use).
 
+
 Run:
     python server.py
 Then open http://127.0.0.1:5000 in your browser.
@@ -24,8 +25,12 @@ Per-machine troubleshooting checklists are cached as Markdown in
 ./guides/<equipment_id>.md and only regenerated when explicitly requested.
 """
 
+import json
 import os
+import re
+import shutil
 from collections import Counter
+from datetime import datetime
 
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
@@ -69,6 +74,56 @@ DEPARTMENTS = {
         "unscheduled": "work_orders_unscheduled_toilet_partitions.json",
         "scheduled": "work_orders_scheduled_toilet_partitions.json",
     },
+    "assembly": {
+        "key": "assembly",
+        "name": "Assembly",
+        "label": "Assembly",
+        "unscheduled": "work_orders_unscheduled_assembly.json",
+        "scheduled": "work_orders_scheduled_assembly.json",
+    },
+    "general": {
+        "key": "general",
+        "name": "General",
+        "label": "General",
+        "unscheduled": "work_orders_unscheduled_general.json",
+        "scheduled": "work_orders_scheduled_general.json",
+    },
+    "machine_shop": {
+        "key": "machine_shop",
+        "name": "Machine Shop",
+        "label": "Machine Shop",
+        "unscheduled": "work_orders_unscheduled_machine_shop.json",
+        "scheduled": "work_orders_scheduled_machine_shop.json",
+    },
+    "maintenance": {
+        "key": "maintenance",
+        "name": "Maintenance",
+        "label": "Maintenance",
+        "unscheduled": "work_orders_unscheduled_maintenance.json",
+        "scheduled": "work_orders_scheduled_maintenance.json",
+    },
+    "mfg_engineering": {
+        "key": "mfg_engineering",
+        "name": "Mfg Engineering",
+        "label": "Mfg Engineering",
+        "unscheduled": "work_orders_unscheduled_mfg_engineering.json",
+        "scheduled": "work_orders_scheduled_mfg_engineering.json",
+    },
+    "quality_assurance": {
+        "key": "quality_assurance",
+        "name": "Quality Assurance",
+        "label": "Quality Assurance",
+        "unscheduled": "work_orders_unscheduled_quality_assurance.json",
+        "scheduled": "work_orders_scheduled_quality_assurance.json",
+    },
+    "shipping": {
+        "key": "shipping",
+        "name": "Shipping",
+        "label": "Shipping",
+        # No work-order files were scraped for Shipping; equipment still shows.
+        "unscheduled": "work_orders_unscheduled_shipping.json",
+        "scheduled": "work_orders_scheduled_shipping.json",
+    },
 }
 
 
@@ -108,6 +163,7 @@ TOILET_GROUPS = {
         'Saw, Horizontal, Holzma',
         'Saw,Horizontal, Holz-Her',
         'Screwdriver, Insert, 1080-2',
+        'Step Drill 1040 CNC Drilling Machine',
         'Step Drill 1080/1090 CNC Drilling Machine',
         'TLF Intellistore (Rainbow Stacking System)- TLF211',
         'Tenoner A 517 Single End',
@@ -119,6 +175,9 @@ TOILET_GROUPS = {
         'Forklift # T5',
         'Scissor Lift #1 (small) Holz-Her Saw',
         'Scissor Lift Holz-Her Edge Bander',
+        'Scissor Lift # 2 (large) Holz-Her Saw',
+        'Scissor Lift 1/2" Edge Finisher',
+        'Scissor Lift 3/4" solid Edge Finisher',
         'Scissor Lift Holzma Saw',
         'Sissors Lift, HolzHer Saw',
         'Stacker R-19',
@@ -136,6 +195,10 @@ TOILET_GROUPS = {
         '2 gallon glue tank with hand held glue nozzle gun',
         '3/4 Thomas return system',
         'Dust Collector, Donaldson Downflo Oval',
+        'FRL - Filter, Regulator, Lubricator',
+        'Meyer rotary airlock (dust collector)',
+        'Panel Handler - 4ft',
+        'Rework Station (Laminate Cell)',
         'Edge finisher Pop UP table',
         'Edgebander Pop up table',
         'Evolve cell Pop UP table',
@@ -159,14 +222,20 @@ TOILET_GROUPS = {
         'Cutout Jig B3471/B3571',
         'Cutout Jig B357, B347',
         'Drill Jig - OS Door Hinge',
+        'Drill Jig - for Door Hinges ( 3 Hinges) Laminate',
+        'Drill Jig - for Door Hinges Laminate',
+        'Drill Jig - for Hinges Stile -I/S-O/S FC For Laminate',
+        'Drill Jig - for Hinges for O/S Stile Hinges',
         'Drill Jig, 1080/ 1090 Leveling Bar',
         'Gage (Go/No Go), Drill Diameter, Laminate',
         'Gage (Go/No Go), Drill Diameter, Solid',
         'Jig, Drill, T-203040 ECOR T-Nut Drill, Laminate',
         'Laminate Drill Hole Depth Gage',
         'TPT CL 1005 ANDY',
+        'TPT CL 1005 TENO',
     ],
     "Carts": [
+        'Cart - TPF Finish Goods',
         'Drywall Carts 1-15',
         'Job Carts 1-6',
         'Materal Carts 1-2',
@@ -250,6 +319,42 @@ for _data in _DEPT_DATA.values():
 
 
 # --------------------------------------------------------------------------- #
+# Equipment master list (the authoritative set of machines per department).
+# The dashboard's machine list is driven by this so that equipment with ZERO
+# work orders still appears, matching the PM database equipment counts.
+# --------------------------------------------------------------------------- #
+EQUIPMENT_FILE = "equipment_data.json"
+
+# Map the equipment-master department string -> our department key.
+_DEPT_NAME_TO_KEY = {cfg["name"]: key for key, cfg in DEPARTMENTS.items()}
+
+
+def _num_id(s: str) -> str:
+    """Extract the numeric portion of an EQ ID (e.g. 'EQ ID 2082' -> '2082')."""
+    m = re.search(r"(\d+)", s or "")
+    return m.group(1) if m else ""
+
+
+def _load_equipment() -> dict[str, list[dict]]:
+    path = os.path.join(OUTPUT_DIR, EQUIPMENT_FILE)
+    by_key: dict[str, list[dict]] = {k: [] for k in DEPARTMENTS}
+    if not os.path.exists(path):
+        return by_key
+    with open(path, encoding="utf-8") as f:
+        records = json.load(f)
+    for e in records:
+        key = _DEPT_NAME_TO_KEY.get((e.get("dept") or "").strip())
+        if key is None:
+            continue  # department not surfaced in the dashboard
+        by_key[key].append(e)
+    return by_key
+
+
+# dept_key -> ordered list of equipment-master records for that department.
+_EQUIP_BY_KEY = _load_equipment()
+
+
+# --------------------------------------------------------------------------- #
 # Helpers
 # --------------------------------------------------------------------------- #
 def _totals(records: list[dict]) -> dict:
@@ -299,9 +404,58 @@ def _eq_label(records: list[dict], eq_id: str) -> str:
     return f"EQ ID {eq_id}"
 
 
+def _dept_machines(dept_key: str) -> list[dict]:
+    """Authoritative machine list for a department, driven by the equipment
+    master. Each machine joins any matching work orders (by numeric EQ ID).
+    Returns dicts of {eq_id, eq_label, name, group, has_guide, recs}."""
+    wo_groups = _machine_groups(dept_key)  # numeric equipment_id -> {unscheduled, scheduled}
+    out = []
+    seen = set()
+    for e in _EQUIP_BY_KEY.get(dept_key, []):
+        eq_id = _num_id(e.get("eq_id"))
+        if not eq_id or eq_id in seen:
+            continue
+        seen.add(eq_id)
+        name = (e.get("equipment_name") or "").strip() or "Unknown"
+        recs = wo_groups.get(eq_id, {"unscheduled": [], "scheduled": []})
+        out.append({
+            "eq_id": eq_id,
+            "eq_label": (e.get("eq_id") or f"EQ ID {eq_id}").strip(),
+            "name": name,
+            "group": _group_for(dept_key, name),
+            "has_guide": os.path.exists(_guide_path(eq_id)),
+            "recs": recs,
+        })
+    return out
+
+
 def _guide_path(eq_id: str) -> str:
     safe = "".join(c for c in str(eq_id) if c.isalnum() or c in ("-", "_"))
     return os.path.join(GUIDES_DIR, f"{safe}.md")
+
+
+def _backup_guide(eq_id: str):
+    """Copy the current guide to a timestamped .bak before it is overwritten,
+    so any regenerate/update is reversible. Returns the backup path or None."""
+    path = _guide_path(eq_id)
+    if not os.path.exists(path):
+        return None
+    safe = "".join(c for c in str(eq_id) if c.isalnum() or c in ("-", "_"))
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    bak = os.path.join(GUIDES_DIR, f"{safe}.{stamp}.bak.md")
+    shutil.copy2(path, bak)
+    return bak
+
+
+def _new_records(records: list[dict], markdown: str) -> list[dict]:
+    """Records whose work-order number is not already cited in the checklist."""
+    cited = set(re.findall(r"\d{2,7}", markdown or ""))
+    out = []
+    for r in records:
+        wo = str(r.get("wo_id", "") or "").strip()
+        if wo and wo not in cited:
+            out.append(r)
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -330,7 +484,7 @@ def api_division():
             "key": key,
             "name": cfg["name"],
             "label": cfg["label"],
-            "machine_count": len(_machine_groups(key)),
+            "machine_count": len(_EQUIP_BY_KEY.get(key, [])),
         })
         depts.append(stats)
     return jsonify({
@@ -351,20 +505,17 @@ def api_department(dept_key):
         return jsonify({"error": "department not found"}), 404
 
     data = _DEPT_DATA[dept_key]
-    groups = _machine_groups(dept_key)
 
     machines = []
-    for eq_id, recs in groups.items():
-        uns, sch = recs["unscheduled"], recs["scheduled"]
-        combined = uns + sch
+    for mc in _dept_machines(dept_key):
+        uns, sch = mc["recs"]["unscheduled"], mc["recs"]["scheduled"]
         stats = _stats(uns, sch)
-        name = _machine_name(combined)
         stats.update({
-            "eq_id": eq_id,
-            "eq_label": _eq_label(combined, eq_id),
-            "name": name,
-            "group": _group_for(dept_key, name),
-            "has_guide": os.path.exists(_guide_path(eq_id)),
+            "eq_id": mc["eq_id"],
+            "eq_label": mc["eq_label"],
+            "name": mc["name"],
+            "group": mc["group"],
+            "has_guide": mc["has_guide"],
         })
         machines.append(stats)
 
@@ -392,20 +543,38 @@ def api_department(dept_key):
 def api_machine(dept_key, eq_id):
     if dept_key not in DEPARTMENTS:
         return jsonify({"error": "department not found"}), 404
-    groups = _machine_groups(dept_key)
-    recs = groups.get(eq_id)
-    if recs is None:
+
+    eq_id = _num_id(eq_id)
+    master = next((e for e in _EQUIP_BY_KEY.get(dept_key, [])
+                   if _num_id(e.get("eq_id")) == eq_id), None)
+    recs = _machine_groups(dept_key).get(eq_id)
+
+    if master is None and recs is None:
         return jsonify({"error": "machine not found"}), 404
 
+    recs = recs or {"unscheduled": [], "scheduled": []}
     uns, sch = recs["unscheduled"], recs["scheduled"]
     combined = uns + sch
+
+    if master is not None:
+        name = (master.get("equipment_name") or "").strip() or "Unknown"
+        eq_label = (master.get("eq_id") or f"EQ ID {eq_id}").strip()
+    else:
+        name = _machine_name(combined)
+        eq_label = _eq_label(combined, eq_id)
+
     return jsonify({
         "machine": {
             "eq_id": eq_id,
-            "eq_label": _eq_label(combined, eq_id),
-            "name": _machine_name(combined),
+            "eq_label": eq_label,
+            "name": name,
             "department": DEPARTMENTS[dept_key]["name"],
             "department_key": dept_key,
+            "group": _group_for(dept_key, name),
+            "make": (master or {}).get("make", ""),
+            "model": (master or {}).get("model", ""),
+            "vendor": (master or {}).get("vendor", ""),
+            "asset_num": (master or {}).get("asset_num", ""),
             "has_guide": os.path.exists(_guide_path(eq_id)),
         },
         "stats": _stats(uns, sch),
@@ -465,6 +634,9 @@ def api_generate_guide(dept_key, eq_id):
     except SystemExit as e:  # analyze() calls sys.exit on failure
         return jsonify({"error": str(e)}), 502
 
+    # Back up any existing (possibly hand-edited) guide before overwriting.
+    _backup_guide(eq_id)
+
     path = _guide_path(eq_id)
     with open(path, "w", encoding="utf-8") as f:
         f.write(markdown)
@@ -472,6 +644,78 @@ def api_generate_guide(dept_key, eq_id):
     return jsonify({
         "exists": True,
         "markdown": markdown,
+        "generated_at": os.path.getmtime(path),
+    })
+
+
+@app.route("/api/departments/<dept_key>/machines/<eq_id>/guide", methods=["PUT"])
+def api_save_guide(dept_key, eq_id):
+    """Save operator-edited Markdown for a machine's checklist."""
+    body = request.get_json(silent=True) or {}
+    markdown = body.get("markdown")
+    if markdown is None:
+        return jsonify({"error": "missing 'markdown'"}), 400
+    # Keep a backup of the previous version so edits are reversible.
+    _backup_guide(eq_id)
+    path = _guide_path(eq_id)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(markdown)
+    return jsonify({
+        "exists": True,
+        "markdown": markdown,
+        "generated_at": os.path.getmtime(path),
+    })
+
+
+@app.route("/api/departments/<dept_key>/machines/<eq_id>/guide/update", methods=["POST"])
+def api_update_guide(dept_key, eq_id):
+    """MERGE newly reported unscheduled work orders into the existing
+    (operator-edited) checklist via the LLM, PRESERVING the human edits. The
+    previous guide is backed up first so the merge is reversible."""
+    if dept_key not in DEPARTMENTS:
+        return jsonify({"error": "department not found"}), 404
+    groups = _machine_groups(dept_key)
+    recs = groups.get(eq_id)
+    if recs is None:
+        return jsonify({"error": "machine not found"}), 404
+
+    path = _guide_path(eq_id)
+    if not os.path.exists(path):
+        return jsonify({"error": "no existing checklist to update; generate one first"}), 400
+
+    with open(path, encoding="utf-8") as f:
+        existing = f.read()
+
+    unscheduled = recs["unscheduled"]
+    new_recs = _new_records(unscheduled, existing)
+    if not new_recs:
+        return jsonify({
+            "exists": True,
+            "markdown": existing,
+            "updated": False,
+            "new_count": 0,
+            "generated_at": os.path.getmtime(path),
+        })
+
+    label = f"{_machine_name(unscheduled)} ({_eq_label(unscheduled, eq_id)})"
+    stats = ae.build_stats(unscheduled)
+    prompt = ae.build_update_prompt(existing, new_recs, stats, label)
+
+    try:
+        markdown = ae.analyze(prompt, MODEL)
+    except SystemExit as e:  # analyze() calls sys.exit on failure
+        return jsonify({"error": str(e)}), 502
+
+    backup = _backup_guide(eq_id)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(markdown)
+
+    return jsonify({
+        "exists": True,
+        "markdown": markdown,
+        "updated": True,
+        "new_count": len(new_recs),
+        "backup": os.path.basename(backup) if backup else None,
         "generated_at": os.path.getmtime(path),
     })
 

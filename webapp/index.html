@@ -259,8 +259,7 @@
           <p className="text-slate-500 mb-5">${data.machines.length} machines · department quick view.</p>
           <${KpiRow} stats=${data.stats} />
 
-          <div className="flex items-center justify-between mt-8 mb-3 gap-3 flex-wrap">
-            <h2 className="text-lg font-bold text-slate-700">Machines</h2>
+          <div className="flex items-center justify-end mt-8 mb-3 gap-3 flex-wrap">
             <input value=${q} onInput=${(e) => setQ(e.target.value)}
               placeholder="Search by name or EQ ID…"
               className="px-4 py-2 rounded-full border border-blue-200 bg-white text-sm w-64
@@ -412,8 +411,11 @@
     /* ------------------------------------------------------------------ */
     function ChecklistTab({ deptKey, eqId, woIds, onOpenWo }) {
       const [state, setState] = useState({ loading: true });
-      const [busy, setBusy] = useState(false);
+      const [busy, setBusy] = useState(null);   // null | "generate" | "update" | "save"
       const [err, setErr] = useState(null);
+      const [info, setInfo] = useState(null);
+      const [editing, setEditing] = useState(false);
+      const [draft, setDraft] = useState("");
       const ref = useRef(null);
       const base = "/api/departments/" + deptKey + "/machines/" + eqId + "/guide";
 
@@ -422,56 +424,126 @@
         getJSON(base).then((d) => setState({ loading: false, ...d })).catch((e) => setErr(e.message));
       }, [base]);
 
-      useEffect(() => { load(); }, [load]);
+      useEffect(() => { load(); setEditing(false); setInfo(null); setErr(null); }, [load]);
 
       const generate = useCallback(async () => {
-        setBusy(true); setErr(null);
+        setBusy("generate"); setErr(null); setInfo(null);
         try {
           const r = await fetch(API + base, { method: "POST" });
           const d = await r.json();
           if (!r.ok) throw new Error(d.error || "generation failed");
           setState({ loading: false, ...d });
         } catch (e) { setErr(e.message); }
-        finally { setBusy(false); }
+        finally { setBusy(null); }
       }, [base]);
+
+      const update = useCallback(async () => {
+        setBusy("update"); setErr(null); setInfo(null);
+        try {
+          const r = await fetch(API + base + "/update", { method: "POST" });
+          const d = await r.json();
+          if (!r.ok) throw new Error(d.error || "update failed");
+          setState({ loading: false, ...d });
+          setInfo(d.updated
+            ? `Merged ${d.new_count} new work order${d.new_count === 1 ? "" : "s"} — your edits were preserved.`
+            : "No new work orders since the last build — checklist unchanged.");
+        } catch (e) { setErr(e.message); }
+        finally { setBusy(null); }
+      }, [base]);
+
+      const startEdit = useCallback(() => {
+        setDraft(state.markdown || "");
+        setEditing(true); setErr(null); setInfo(null);
+      }, [state.markdown]);
+
+      const save = useCallback(async () => {
+        setBusy("save"); setErr(null); setInfo(null);
+        try {
+          const r = await fetch(API + base, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ markdown: draft }),
+          });
+          const d = await r.json();
+          if (!r.ok) throw new Error(d.error || "save failed");
+          setState({ loading: false, ...d });
+          setEditing(false);
+          setInfo("Your edits were saved.");
+        } catch (e) { setErr(e.message); }
+        finally { setBusy(null); }
+      }, [base, draft]);
 
       // Render markdown and linkify known WO numbers.
       const renderedHtml = state.markdown ? linkifyGuide(marked.parse(state.markdown), woIds) : "";
 
       useEffect(() => {
         const el = ref.current;
-        if (!el) return;
+        if (!el || editing) return;
         const handler = (e) => {
           const wo = e.target && e.target.dataset && e.target.dataset.wo;
           if (wo) onOpenWo(wo);
         };
         el.addEventListener("click", handler);
         return () => el.removeEventListener("click", handler);
-      }, [renderedHtml, onOpenWo]);
+      }, [renderedHtml, onOpenWo, editing]);
 
       if (state.loading) return html`<${Spinner} label="Loading checklist…" />`;
+
+      const btn = "px-4 py-2 rounded-full text-sm font-semibold shadow-sm disabled:opacity-50";
 
       return html`
         <div>
           <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
             <div className="text-sm text-slate-500">
               ${state.exists
-                ? html`Generated from this machine's unscheduled work orders.`
+                ? html`Built from this machine's unscheduled work orders. Edits you make are kept when you update.`
                 : html`No checklist yet — generate one from the unscheduled work orders.`}
             </div>
-            <button onClick=${generate} disabled=${busy}
-              className="px-4 py-2 rounded-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50
-                         text-white text-sm font-semibold shadow-sm">
-              ${busy ? "Generating… (this can take a minute)" : state.exists ? "Regenerate" : "Generate Checklist"}
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              ${!state.exists && html`
+                <button onClick=${generate} disabled=${!!busy} className=${btn + " bg-blue-600 hover:bg-blue-700 text-white"}>
+                  ${busy === "generate" ? "Generating…" : "Generate Checklist"}
+                </button>`}
+
+              ${state.exists && !editing && html`
+                <button onClick=${startEdit} disabled=${!!busy} className=${btn + " bg-white border border-blue-200 text-blue-700 hover:bg-blue-50"}>
+                  Edit
+                </button>
+                <button onClick=${update} disabled=${!!busy} title="Adds newly reported issues while keeping your edits"
+                  className=${btn + " bg-blue-600 hover:bg-blue-700 text-white"}>
+                  ${busy === "update" ? "Updating…" : "Update with new work orders"}
+                </button>`}
+
+              ${editing && html`
+                <button onClick=${() => setEditing(false)} disabled=${!!busy} className=${btn + " bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}>
+                  Cancel
+                </button>
+                <button onClick=${save} disabled=${!!busy} className=${btn + " bg-emerald-600 hover:bg-emerald-700 text-white"}>
+                  ${busy === "save" ? "Saving…" : "Save edits"}
+                </button>`}
+            </div>
           </div>
+
           ${err && html`<div className="bg-rose-50 text-rose-700 rounded-xl px-4 py-3 mb-4 text-sm">${err}</div>`}
-          ${busy && html`<${Spinner} label="Asking Ollama to analyze the work orders…" />`}
-          ${state.exists
-            ? html`<div ref=${ref} className="guide bg-white rounded-2xl p-6 shadow-sm border border-blue-100"
-                     dangerouslySetInnerHTML=${{ __html: renderedHtml }}></div>`
-            : !busy && html`<div className="text-slate-400 bg-white rounded-2xl p-10 text-center border border-dashed border-blue-200">
-                 Click <b>Generate Checklist</b> to build an operator troubleshooting guide.</div>`}
+          ${info && html`<div className="bg-emerald-50 text-emerald-700 rounded-xl px-4 py-3 mb-4 text-sm">${info}</div>`}
+          ${busy && busy !== "save" && html`<${Spinner} label="Asking Ollama to analyze the work orders…" />`}
+
+          ${editing
+            ? html`
+              <div>
+                <textarea value=${draft} onInput=${(e) => setDraft(e.target.value)} spellcheck=${false}
+                  className="w-full h-[60vh] font-mono text-sm leading-relaxed bg-white rounded-2xl p-4
+                             border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"></textarea>
+                <p className="text-xs text-slate-400 mt-2">
+                  Edit the Markdown above. Tables use the
+                  <code className="mx-1">| col | col |</code> format with <code>&lt;br&gt;</code> for line breaks inside a cell.
+                </p>
+              </div>`
+            : state.exists
+              ? html`<div ref=${ref} className="guide bg-white rounded-2xl p-6 shadow-sm border border-blue-100"
+                       dangerouslySetInnerHTML=${{ __html: renderedHtml }}></div>`
+              : !busy && html`<div className="text-slate-400 bg-white rounded-2xl p-10 text-center border border-dashed border-blue-200">
+                   Click <b>Generate Checklist</b> to build an operator troubleshooting guide.</div>`}
         </div>`;
     }
 
@@ -558,7 +630,11 @@
     /* ------------------------------------------------------------------ */
     /* App shell + routing                                                */
     /* ------------------------------------------------------------------ */
-    const DEPT_LABELS = { soap: "Soap & Assembly", toilet: "Toilet Partitions" };
+    const DEPT_LABELS = {
+      soap: "Soap & Assembly", toilet: "Toilet Partitions", assembly: "Assembly",
+      general: "General", machine_shop: "Machine Shop", maintenance: "Maintenance",
+      mfg_engineering: "Mfg Engineering", quality_assurance: "Quality Assurance",
+    };
 
     function App() {
       const [route, setRoute] = useState({ view: "division" });

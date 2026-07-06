@@ -5,22 +5,65 @@ Chrome must be running via start_chrome_debug.bat
 ================================================================
 
 Attaching to Chrome at 127.0.0.1:9230 ...
-Attached. Current URL: None
-Loaded 1 'Assembly' equipment from equipment_data.csv
 
-Scraping 1 equipment records...
+ERROR: Cannot attach to Chrome.
+Run start_chrome_debug.bat first (close all other Chrome windows).
 
-[1/1] EQ ID 2101
-  Error (unscheduled): Message: no such window: target window already closed
-from unknown error: web view not found
-  (Session info: chrome=149.0.7827.155)
+Traceback (most recent call last):
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 1388, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 1383, in main
+    scraper.run(limit=args.limit, department=args.department,
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                equipment_ids=args.equipment_ids)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 1255, in run
+    self.attach()
+    ~~~~~~~~~~~^^
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 667, in attach
+    raise e
+  File "C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\scraper.py", line 663, in attach
+    self.driver = webdriver.Chrome(service=svc, options=opts)
+                  ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\chrome\webdriver.py", line 45, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        browser_name=DesiredCapabilities.CHROME["browserName"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        keep_alive=keep_alive,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\chromium\webdriver.py", line 66, in __init__
+    super().__init__(command_executor=executor, options=self.options)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\common\webdriver.py", line 25, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 300, in __init__
+    self.start_session(capabilities)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 396, in start_session
+    response = self.execute(Command.NEW_SESSION, caps)["value"]
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\webdriver.py", line 492, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Python314\Lib\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: cannot connect to chrome at 127.0.0.1:9230
+from chrome not reachable; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#sessionnotcreatedexception
 Stacktrace:
 	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
 	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
-	chromedriver!(No symbol) [0x7ff64fc1793d]
-	chromedriver!(No symbol) [0x7ff64fbee362]
-	chromedriver!(No symbol) [0x7ff64fca1846]
-	chromedriver!(No symbol) [0x7ff64fcbec82]
+	chromedriver!(No symbol) [0x7ff64fc17726]
+	chromedriver!(No symbol) [0x7ff64fc07d6a]
+	chromedriver!(No symbol) [0x7ff64fc5f48b]
+	chromedriver!(No symbol) [0x7ff64fc53c6e]
+	chromedriver!(No symbol) [0x7ff64fca85f1]
+	chromedriver!(No symbol) [0x7ff64fca7e56]
 	chromedriver!(No symbol) [0x7ff64fc6401c]
 	chromedriver!(No symbol) [0x7ff64fc64f43]
 	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
@@ -34,30 +77,3 @@ Stacktrace:
 	KERNEL32!(No symbol) [0x7ffaab8ee957]
 	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
 
-  Error (scheduled): Message: no such window: target window already closed
-from unknown error: web view not found
-  (Session info: chrome=149.0.7827.155)
-Stacktrace:
-	chromedriver!GetHandleVerifier [0x7ff6500d3fa5+14925]
-	chromedriver!GetHandleVerifier [0x7ff6500d4000+14980]
-	chromedriver!(No symbol) [0x7ff64fc1793d]
-	chromedriver!(No symbol) [0x7ff64fbee362]
-	chromedriver!(No symbol) [0x7ff64fca1846]
-	chromedriver!(No symbol) [0x7ff64fcbec82]
-	chromedriver!(No symbol) [0x7ff64fc6401c]
-	chromedriver!(No symbol) [0x7ff64fc64f43]
-	chromedriver!GetHandleVerifier [0x7ff6506b7591+5f7f11]
-	chromedriver!GetHandleVerifier [0x7ff6506b1902+5f2282]
-	chromedriver!GetHandleVerifier [0x7ff6506d7115+617a95]
-	chromedriver!GetHandleVerifier [0x7ff6500f1dce+3274e]
-	chromedriver!GetHandleVerifier [0x7ff6500fa82c+3b1ac]
-	chromedriver!GetHandleVerifier [0x7ff6500dd744+1e0c4]
-	chromedriver!GetHandleVerifier [0x7ff6500dd8d4+1e254]
-	chromedriver!GetHandleVerifier [0x7ff6500c1447+1dc7]
-	KERNEL32!(No symbol) [0x7ffaab8ee957]
-	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
-
-Saved 0 unscheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_unscheduled_assembly.csv
-Saved 0 scheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_scheduled_assembly.csv
-
-Done.
