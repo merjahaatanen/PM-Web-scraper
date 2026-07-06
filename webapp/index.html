@@ -628,6 +628,120 @@
     }
 
     /* ------------------------------------------------------------------ */
+    /* Weekly schedule dashboard (Sunday -> Sunday)                        */
+    /* ------------------------------------------------------------------ */
+    const WEEK_DEFS = [
+      { key: "last", label: "Last Week", accent: "border-slate-300", head: "bg-slate-100 text-slate-600" },
+      { key: "this", label: "This Week", accent: "border-blue-300", head: "bg-blue-600 text-white" },
+      { key: "next", label: "Next Week", accent: "border-emerald-300", head: "bg-emerald-600 text-white" },
+    ];
+
+    function WeekWORow({ r, showDept, deptLabels, onOpenWo }) {
+      const when = r.wo_type === "scheduled" ? r.due_date : r.date_notified;
+      return html`
+        <button onClick=${() => onOpenWo(r.wo_id)}
+          className="w-full text-left bg-white rounded-xl px-3 py-2 border border-blue-100
+                     hover:border-blue-300 hover:shadow-sm transition">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-bold text-blue-700 text-sm">WO #${r.wo_id}</span>
+            <span className="text-[11px] text-slate-400 whitespace-nowrap">${when || ""}</span>
+          </div>
+          <div className="text-xs text-slate-600 mt-0.5 line-clamp-2">${r.problem || r.audit_item || r.equipment_name || "—"}</div>
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <span className="text-[11px] text-slate-500 truncate max-w-[11rem]">${r.equipment_name || ""}</span>
+            ${r.status && html`<span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">${r.status}</span>`}
+            ${showDept && deptLabels[r.department_key] && html`<span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">${deptLabels[r.department_key]}</span>`}
+          </div>
+        </button>`;
+    }
+
+    function WeekColumn({ def, week, bucket, showDept, deptLabels, onOpenWo }) {
+      const sch = bucket.scheduled || [];
+      const uns = bucket.unscheduled || [];
+      return html`
+        <section className=${"bg-slate-50 rounded-2xl border " + def.accent + " overflow-hidden flex flex-col"}>
+          <div className=${"px-4 py-3 " + def.head}>
+            <div className="font-extrabold">${def.label}</div>
+            <div className="text-xs opacity-80">${week ? (week.start + " → " + week.end) : ""}</div>
+            <div className="flex gap-2 mt-2 text-xs">
+              <span className="bg-white/80 text-sky-700 rounded-full px-2 py-0.5 font-semibold">${sch.length} scheduled</span>
+              <span className="bg-white/80 text-rose-700 rounded-full px-2 py-0.5 font-semibold">${uns.length} unscheduled</span>
+            </div>
+          </div>
+          <div className="p-3 space-y-4 overflow-y-auto" style=${{ maxHeight: "62vh" }}>
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wide text-sky-600 mb-2">Scheduled (${sch.length})</div>
+              <div className="space-y-2">
+                ${sch.length === 0
+                  ? html`<div className="text-slate-400 text-xs italic">None</div>`
+                  : sch.map((r) => html`<${WeekWORow} key=${"s" + r.wo_id} r=${r} showDept=${showDept} deptLabels=${deptLabels} onOpenWo=${onOpenWo} />`)}
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wide text-rose-600 mb-2">Unscheduled (${uns.length})</div>
+              <div className="space-y-2">
+                ${uns.length === 0
+                  ? html`<div className="text-slate-400 text-xs italic">None</div>`
+                  : uns.map((r) => html`<${WeekWORow} key=${"u" + r.wo_id} r=${r} showDept=${showDept} deptLabels=${deptLabels} onOpenWo=${onOpenWo} />`)}
+              </div>
+            </div>
+          </div>
+        </section>`;
+    }
+
+    function WeeklyDashboard({ onOpenWo }) {
+      const [data, setData] = useState(null);
+      const [err, setErr] = useState(null);
+      const [scope, setScope] = useState("all");
+
+      useEffect(() => {
+        getJSON("/api/weekly").then(setData).catch((e) => setErr(e.message));
+      }, []);
+
+      if (err) return html`<div className="text-rose-600">${err}</div>`;
+      if (!data) return html`<${Spinner} label="Loading weekly schedule…" />`;
+
+      const deptLabels = {};
+      data.departments.forEach((d) => { deptLabels[d.key] = d.label; });
+
+      // Build the buckets for the selected scope ("all" = combine departments).
+      const empty = () => ({ scheduled: [], unscheduled: [] });
+      const buckets = { last: empty(), this: empty(), next: empty() };
+      const source = scope === "all"
+        ? data.departments
+        : data.departments.filter((d) => d.key === scope);
+      source.forEach((d) => {
+        WEEK_DEFS.forEach(({ key }) => {
+          buckets[key].scheduled.push(...(d.weeks[key]?.scheduled || []));
+          buckets[key].unscheduled.push(...(d.weeks[key]?.unscheduled || []));
+        });
+      });
+
+      return html`
+        <div className="fade-in">
+          <${Breadcrumb} items=${[{ label: "BLA Division" }, { label: "Weekly Schedule" }]} />
+          <div className="flex items-end justify-between flex-wrap gap-3 mb-5">
+            <div>
+              <h1 className="text-2xl font-extrabold text-slate-800 mb-1">Weekly Work Order Schedule</h1>
+              <p className="text-slate-500">Scheduled &amp; unscheduled work orders by week (Sunday → Sunday). Future weeks show scheduled work only.</p>
+            </div>
+            <select value=${scope} onChange=${(e) => setScope(e.target.value)}
+              className="px-4 py-2 rounded-full border border-blue-200 bg-white text-sm font-semibold text-slate-700
+                         focus:outline-none focus:ring-2 focus:ring-blue-300">
+              <option value="all">All Departments (Overall)</option>
+              ${data.departments.map((d) => html`<option key=${d.key} value=${d.key}>${d.label}</option>`)}
+            </select>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            ${WEEK_DEFS.map((def) => html`
+              <${WeekColumn} key=${def.key} def=${def} week=${data.weeks[def.key]}
+                bucket=${buckets[def.key]} showDept=${scope === "all"}
+                deptLabels=${deptLabels} onOpenWo=${onOpenWo} />`)}
+          </div>
+        </div>`;
+    }
+
+    /* ------------------------------------------------------------------ */
     /* App shell + routing                                                */
     /* ------------------------------------------------------------------ */
     const DEPT_LABELS = {
@@ -644,11 +758,23 @@
       const openDept = (deptKey) => setRoute({ view: "department", deptKey });
       const openMachine = (eqId) =>
         setRoute((r) => ({ view: "machine", deptKey: r.deptKey, eqId }));
+      const openWeekly = () => setRoute({ view: "weekly" });
+
+      const onOverview = ["division", "department", "machine"].includes(route.view);
+      const navBtn = (active) =>
+        "px-4 py-2 rounded-full text-sm font-semibold transition " +
+        (active ? "bg-blue-600 text-white shadow" : "text-slate-600 hover:bg-blue-50");
 
       return html`
         <div className="min-h-screen">
           <${Header} />
-          <main className="max-w-6xl mx-auto px-6 py-8">
+          <div className="max-w-6xl mx-auto px-6 pt-5">
+            <nav className="flex gap-2 bg-white p-1.5 rounded-full shadow-sm border border-blue-100 w-fit">
+              <button onClick=${goHome} className=${navBtn(onOverview)}>Overview</button>
+              <button onClick=${openWeekly} className=${navBtn(route.view === "weekly")}>Weekly Schedule</button>
+            </nav>
+          </div>
+          <main className="max-w-6xl mx-auto px-6 py-6">
             ${route.view === "division" && html`<${DivisionDashboard} onOpenDept=${openDept} />`}
             ${route.view === "department" && html`
               <${DepartmentDashboard} deptKey=${route.deptKey} onHome=${goHome} onOpenMachine=${openMachine} />`}
@@ -656,6 +782,7 @@
               <${MachineView} deptKey=${route.deptKey} eqId=${route.eqId}
                 deptLabel=${DEPT_LABELS[route.deptKey]}
                 onHome=${goHome} onOpenDept=${openDept} onOpenWo=${setWoId} />`}
+            ${route.view === "weekly" && html`<${WeeklyDashboard} onOpenWo=${setWoId} />`}
           </main>
           ${woId && html`<${WorkOrderModal} woId=${woId} onClose=${() => setWoId(null)} onOpenWo=${setWoId} />`}
         </div>`;

@@ -29,13 +29,16 @@ import json
 import os
 import re
 import shutil
+import threading
+import traceback
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 import analyze_equipment as ae
+import guide_engine as ge
 
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 WEBAPP_DIR = os.path.join(OUTPUT_DIR, "webapp")
@@ -295,27 +298,14 @@ def _load(filename: str) -> list[dict]:
     return ae.load_work_orders(path)
 
 
-# Loaded once at startup; restart the server to pick up new scrapes.
+# In-memory caches. Populated by reload_data(), which is called once at startup
+# AND by the nightly job so the frontend reflects a fresh scrape WITHOUT needing
+# a server restart. A lock guards swaps so requests never see half-loaded data.
+_DATA_LOCK = threading.RLock()
 _DEPT_DATA: dict[str, dict[str, list[dict]]] = {}
-for _key, _cfg in DEPARTMENTS.items():
-    _uns = _load(_cfg["unscheduled"])
-    _sch = _load(_cfg["scheduled"])
-    for _r in _uns:
-        _r["wo_type"] = "unscheduled"
-        _r["department_key"] = _key
-    for _r in _sch:
-        _r["wo_type"] = "scheduled"
-        _r["department_key"] = _key
-    _DEPT_DATA[_key] = {"unscheduled": _uns, "scheduled": _sch}
-
-# Flat index for fast single work-order lookup (wo_id -> record).
 _WO_INDEX: dict[str, dict] = {}
-for _data in _DEPT_DATA.values():
-    for _kind in ("unscheduled", "scheduled"):
-        for _r in _data[_kind]:
-            _wid = str(_r.get("wo_id") or "").strip()
-            if _wid and _wid not in _WO_INDEX:
-                _WO_INDEX[_wid] = _r
+_EQUIP_BY_KEY: dict[str, list[dict]] = {}
+_LAST_RELOAD: datetime | None = None
 
 
 # --------------------------------------------------------------------------- #
@@ -350,8 +340,41 @@ def _load_equipment() -> dict[str, list[dict]]:
     return by_key
 
 
-# dept_key -> ordered list of equipment-master records for that department.
-_EQUIP_BY_KEY = _load_equipment()
+def reload_data() -> datetime:
+    """(Re)load every department's work orders + the equipment master into the
+    in-memory caches, then atomically swap them in. Safe to call at any time."""
+    global _DEPT_DATA, _WO_INDEX, _EQUIP_BY_KEY, _LAST_RELOAD
+    dept_data: dict[str, dict[str, list[dict]]] = {}
+    for key, cfg in DEPARTMENTS.items():
+        uns = _load(cfg["unscheduled"])
+        sch = _load(cfg["scheduled"])
+        for r in uns:
+            r["wo_type"] = "unscheduled"
+            r["department_key"] = key
+        for r in sch:
+            r["wo_type"] = "scheduled"
+            r["department_key"] = key
+        dept_data[key] = {"unscheduled": uns, "scheduled": sch}
+
+    wo_index: dict[str, dict] = {}
+    for data in dept_data.values():
+        for kind in ("unscheduled", "scheduled"):
+            for r in data[kind]:
+                wid = str(r.get("wo_id") or "").strip()
+                if wid and wid not in wo_index:
+                    wo_index[wid] = r
+
+    equip = _load_equipment()
+    with _DATA_LOCK:
+        _DEPT_DATA = dept_data
+        _WO_INDEX = wo_index
+        _EQUIP_BY_KEY = equip
+        _LAST_RELOAD = datetime.now()
+    return _LAST_RELOAD
+
+
+# Initial load at import time.
+reload_data()
 
 
 # --------------------------------------------------------------------------- #
@@ -620,31 +643,22 @@ def api_generate_guide(dept_key, eq_id):
         return jsonify({"error": "machine not found"}), 404
 
     # Checklist is built ENTIRELY from the machine's unscheduled (breakdown)
-    # work orders, per the requirements.
+    # work orders, per the requirements. guide_engine injects any recorded
+    # operator edits so they survive a full regeneration.
     unscheduled = recs["unscheduled"]
     if not unscheduled:
         return jsonify({"error": "no unscheduled work orders to analyze for this machine"}), 400
 
     label = f"{_machine_name(unscheduled)} ({_eq_label(unscheduled, eq_id)})"
-    stats = ae.build_stats(unscheduled)
-    prompt = ae.build_troubleshoot_prompt(unscheduled, stats, label)
-
     try:
-        markdown = ae.analyze(prompt, MODEL)
+        markdown = ge.generate_guide(eq_id, unscheduled, label, MODEL)
     except SystemExit as e:  # analyze() calls sys.exit on failure
         return jsonify({"error": str(e)}), 502
-
-    # Back up any existing (possibly hand-edited) guide before overwriting.
-    _backup_guide(eq_id)
-
-    path = _guide_path(eq_id)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(markdown)
 
     return jsonify({
         "exists": True,
         "markdown": markdown,
-        "generated_at": os.path.getmtime(path),
+        "generated_at": os.path.getmtime(ge.guide_path(eq_id)),
     })
 
 
@@ -655,15 +669,14 @@ def api_save_guide(dept_key, eq_id):
     markdown = body.get("markdown")
     if markdown is None:
         return jsonify({"error": "missing 'markdown'"}), 400
-    # Keep a backup of the previous version so edits are reversible.
-    _backup_guide(eq_id)
-    path = _guide_path(eq_id)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(markdown)
+    # save_edit backs up the previous version AND records the manual-edit diff
+    # into the persistent edit log so it is injected into all future prompts.
+    author = (body.get("author") or "").strip()
+    result = ge.save_edit(eq_id, markdown, author=author)
     return jsonify({
         "exists": True,
-        "markdown": markdown,
-        "generated_at": os.path.getmtime(path),
+        "markdown": result["markdown"],
+        "generated_at": result["generated_at"],
     })
 
 
@@ -679,49 +692,229 @@ def api_update_guide(dept_key, eq_id):
     if recs is None:
         return jsonify({"error": "machine not found"}), 404
 
-    path = _guide_path(eq_id)
-    if not os.path.exists(path):
+    if not ge.guide_exists(eq_id):
         return jsonify({"error": "no existing checklist to update; generate one first"}), 400
 
-    with open(path, encoding="utf-8") as f:
-        existing = f.read()
-
     unscheduled = recs["unscheduled"]
-    new_recs = _new_records(unscheduled, existing)
-    if not new_recs:
-        return jsonify({
-            "exists": True,
-            "markdown": existing,
-            "updated": False,
-            "new_count": 0,
-            "generated_at": os.path.getmtime(path),
-        })
-
     label = f"{_machine_name(unscheduled)} ({_eq_label(unscheduled, eq_id)})"
-    stats = ae.build_stats(unscheduled)
-    prompt = ae.build_update_prompt(existing, new_recs, stats, label)
-
     try:
-        markdown = ae.analyze(prompt, MODEL)
+        result = ge.update_guide(eq_id, unscheduled, label, MODEL)
     except SystemExit as e:  # analyze() calls sys.exit on failure
         return jsonify({"error": str(e)}), 502
 
-    backup = _backup_guide(eq_id)
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(markdown)
-
     return jsonify({
         "exists": True,
-        "markdown": markdown,
-        "updated": True,
-        "new_count": len(new_recs),
-        "backup": os.path.basename(backup) if backup else None,
-        "generated_at": os.path.getmtime(path),
+        "markdown": result["markdown"],
+        "updated": result["updated"],
+        "new_count": result["new_count"],
+        "generated_at": os.path.getmtime(ge.guide_path(eq_id)),
     })
 
 
+# --------------------------------------------------------------------------- #
+# Weekly work-order dashboard (Sunday -> Sunday weeks)
+# --------------------------------------------------------------------------- #
+def _week_starts(today: datetime | None = None):
+    """Return (last_sun, this_sun, next_sun, week_after) as date objects.
+    Weeks run Sunday 00:00 -> next Sunday 00:00."""
+    today = (today or datetime.now()).date()
+    # Python weekday(): Mon=0 .. Sun=6. Days since the most recent Sunday:
+    since_sun = (today.weekday() + 1) % 7
+    this_sun = today - timedelta(days=since_sun)
+    return (this_sun - timedelta(days=7), this_sun,
+            this_sun + timedelta(days=7), this_sun + timedelta(days=14))
+
+
+def _wo_date(rec: dict):
+    """The date that places a work order in a week: due_date for scheduled,
+    date_notified for unscheduled."""
+    raw = rec.get("due_date") if rec.get("wo_type") == "scheduled" else rec.get("date_notified")
+    d = ae._parse_date(raw)
+    return d.date() if d else None
+
+
+@app.route("/api/weekly")
+def api_weekly():
+    """Per-department scheduled + unscheduled work orders bucketed into last
+    week, this week and next week (Sunday->Sunday). The frontend combines the
+    departments for the overall view. Future weeks naturally contain scheduled
+    work orders only (unscheduled breakdowns are reported as they happen)."""
+    last_sun, this_sun, next_sun, week_after = _week_starts()
+    bounds = {
+        "last": (last_sun, this_sun),
+        "this": (this_sun, next_sun),
+        "next": (next_sun, week_after),
+    }
+    weeks_meta = {
+        name: {"start": start.strftime("%Y-%m-%d"),
+               "end": (end - timedelta(days=1)).strftime("%Y-%m-%d")}
+        for name, (start, end) in bounds.items()
+    }
+
+    def _compact(r: dict) -> dict:
+        return {
+            "wo_id": r.get("wo_id"),
+            "equipment_id": r.get("equipment_id"),
+            "equipment_eq_id": r.get("equipment_eq_id"),
+            "equipment_name": r.get("equipment_name"),
+            "department_key": r.get("department_key"),
+            "wo_type": r.get("wo_type"),
+            "status": r.get("status"),
+            "urgency": r.get("urgency"),
+            "due_date": r.get("due_date"),
+            "date_notified": r.get("date_notified"),
+            "problem": r.get("problem"),
+            "audit_item": r.get("audit_item"),
+            "work_performed_by": r.get("work_performed_by"),
+        }
+
+    with _DATA_LOCK:
+        departments = []
+        for key, cfg in DEPARTMENTS.items():
+            data = _DEPT_DATA.get(key, {"unscheduled": [], "scheduled": []})
+            dept_buckets = {name: {"scheduled": [], "unscheduled": []} for name in bounds}
+            for kind in ("scheduled", "unscheduled"):
+                for r in data[kind]:
+                    d = _wo_date(r)
+                    if not d:
+                        continue
+                    for name, (start, end) in bounds.items():
+                        if start <= d < end:
+                            dept_buckets[name][kind].append(_compact(r))
+                            break
+            departments.append({
+                "key": key,
+                "label": cfg["label"],
+                "weeks": dept_buckets,
+            })
+
+    return jsonify({"weeks": weeks_meta, "departments": departments})
+
+
+# --------------------------------------------------------------------------- #
+# Nightly rescrape + regeneration (scheduled in-process via APScheduler)
+# --------------------------------------------------------------------------- #
+_NIGHTLY = {
+    "running": False,
+    "last_run": None,
+    "last_status": None,     # "success" | "error" | "skipped"
+    "last_summary": None,
+    "last_error": None,
+    "progress": None,
+    "history": [],           # recent run summaries
+}
+_NIGHTLY_LOCK = threading.Lock()
+
+
+def _nightly_progress(msg: str):
+    _NIGHTLY["progress"] = msg
+    print(f"[nightly] {msg}", flush=True)
+
+
+def _run_nightly(reason: str = "scheduled"):
+    """Execute one nightly cycle. Guarded so only one runs at a time."""
+    if not _NIGHTLY_LOCK.acquire(blocking=False):
+        _nightly_progress("a nightly run is already in progress; skipping")
+        return
+    _NIGHTLY["running"] = True
+    _NIGHTLY["last_error"] = None
+    started = datetime.now()
+    try:
+        import nightly_update
+        summary = nightly_update.run(
+            model=MODEL,
+            progress=_nightly_progress,
+            reload_callback=reload_data,
+        )
+        _NIGHTLY["last_status"] = summary.get("status", "success")
+        _NIGHTLY["last_summary"] = summary
+    except Exception as e:
+        _NIGHTLY["last_status"] = "error"
+        _NIGHTLY["last_error"] = f"{e}\n{traceback.format_exc()}"
+        _nightly_progress(f"ERROR: {e}")
+    finally:
+        _NIGHTLY["last_run"] = started.isoformat(timespec="seconds")
+        _NIGHTLY["running"] = False
+        _NIGHTLY["progress"] = None
+        _NIGHTLY["history"] = ([{
+            "run": _NIGHTLY["last_run"],
+            "status": _NIGHTLY["last_status"],
+            "reason": reason,
+            "summary": _NIGHTLY["last_summary"],
+        }] + _NIGHTLY["history"])[:20]
+        _NIGHTLY_LOCK.release()
+
+
+@app.route("/api/nightly/status")
+def api_nightly_status():
+    return jsonify({k: v for k, v in _NIGHTLY.items()})
+
+
+@app.route("/api/nightly/run", methods=["POST"])
+def api_nightly_run():
+    """Manually trigger a nightly cycle (runs in a background thread)."""
+    if _NIGHTLY["running"]:
+        return jsonify({"error": "a nightly run is already in progress"}), 409
+    threading.Thread(target=_run_nightly, kwargs={"reason": "manual"},
+                     daemon=True).start()
+    return jsonify({"started": True})
+
+
+def _start_chrome():
+    """Spin up the logged-in debug Chrome on startup and capture its port so the
+    nightly scrape can attach to it. Best-effort: the server still runs if this
+    fails (e.g. no desktop session)."""
+    if os.environ.get("CHROME_AUTOSTART", "1").strip() == "0":
+        print("[chrome] autostart disabled (CHROME_AUTOSTART=0)")
+        return
+    try:
+        import chrome_session
+        port = chrome_session.ensure_session(require_login=False)
+        print(f"[chrome] debug Chrome ready on port {port} "
+              f"(logged_in={chrome_session.is_logged_in(port)})")
+        print("[chrome] If not logged in, sign into the PM site in that Chrome "
+              "window - the session is reused for every nightly scrape.")
+    except Exception as e:
+        print(f"[chrome] could not auto-start Chrome: {e}")
+        print("[chrome] Launch it manually with: python chrome_session.py")
+
+
+def _start_scheduler():
+    """Schedule the nightly job in-process. Uses APScheduler if available."""
+    if os.environ.get("NIGHTLY_ENABLED", "1").strip() == "0":
+        print("[nightly] scheduler disabled (NIGHTLY_ENABLED=0)")
+        return
+    hour = int(os.environ.get("NIGHTLY_HOUR", "2"))
+    minute = int(os.environ.get("NIGHTLY_MINUTE", "0"))
+    try:
+        from apscheduler.schedulers.background import BackgroundScheduler
+        from apscheduler.triggers.cron import CronTrigger
+    except ImportError:
+        print("[nightly] APScheduler not installed; run 'pip install -r "
+              "requirements.txt'. Nightly auto-run is OFF (manual trigger still "
+              "works via POST /api/nightly/run).")
+        return
+    sched = BackgroundScheduler(daemon=True)
+    sched.add_job(lambda: _run_nightly("scheduled"),
+                  CronTrigger(hour=hour, minute=minute),
+                  id="nightly_update", replace_existing=True,
+                  misfire_grace_time=3600, coalesce=True)
+    sched.start()
+    print(f"[nightly] scheduled daily at {hour:02d}:{minute:02d} local time")
+
+
 if __name__ == "__main__":
-    print("BLA Maintenance Dashboard running at http://127.0.0.1:5000")
+    host = os.environ.get("SERVER_HOST", "0.0.0.0")
+    port = int(os.environ.get("SERVER_PORT", "5000"))
+    print("=" * 60)
+    print("BLA Maintenance Dashboard")
+    print(f"  Local:   http://127.0.0.1:{port}")
+    if host == "0.0.0.0":
+        print(f"  Network: http://<this-machine-ip>:{port}  (reachable on your LAN)")
     print(f"  Checklist provider: {'ollama' if os.environ.get('OLLAMA_API_KEY') else 'gemini'} "
           f"(model: {ae.OLLAMA_MODEL})")
-    app.run(host="127.0.0.1", port=5000, threaded=True, debug=False)
+    print("=" * 60)
+    _start_chrome()
+    _start_scheduler()
+    # use_reloader=False so APScheduler doesn't start twice under the reloader.
+    app.run(host=host, port=port, threaded=True, debug=False, use_reloader=False)

@@ -182,8 +182,29 @@ Be specific and cite WO numbers as evidence. Do not invent data that is not pres
 """
 
 
-def build_troubleshoot_prompt(records: list[dict], stats: dict, label: str) -> str:
+def _operator_edits_section(operator_edits: str) -> str:
+    """A prompt block that forces the model to preserve manual operator edits.
+    `operator_edits` is a pre-formatted list of instructions (see guide_engine).
+    Returns an empty string when there are no recorded edits."""
+    if not (operator_edits or "").strip():
+        return ""
+    return f"""
+
+=== OPERATOR EDITS THAT MUST BE PRESERVED ===
+A human reviewer has manually edited this machine's checklist over time. The
+edits below are listed oldest-first; when two edits conflict, the LATER edit
+wins. You MUST carry every one of these changes into your output, even when you
+are rebuilding the checklist from scratch. Do not undo or contradict them.
+
+{operator_edits}
+=== END OPERATOR EDITS ===
+"""
+
+
+def build_troubleshoot_prompt(records: list[dict], stats: dict, label: str,
+                              operator_edits: str = "") -> str:
     compact = _compact_records(records)
+    edits_block = _operator_edits_section(operator_edits)
 
     return f"""You are a senior maintenance technician writing a practical
 TROUBLESHOOTING CHECKLIST that machine OPERATORS (not engineers) will use to
@@ -199,7 +220,7 @@ problem categories ordered by how often they occur (most frequent first).
 
 === WORK ORDERS (JSON) ===
 {json.dumps(compact, indent=2)}
-
+{edits_block}
 Produce the checklist as Markdown using EXACTLY this structure and order:
 
 1. A single H1 title line: "# Operator Troubleshooting Checklist: {label}".
@@ -241,10 +262,11 @@ GENERAL RULES:
 
 
 def build_update_prompt(existing_markdown: str, new_records: list[dict],
-                        stats: dict, label: str) -> str:
+                        stats: dict, label: str, operator_edits: str = "") -> str:
     """Prompt that MERGES newly reported work orders into an operator-edited
     checklist, preserving the human edits instead of rebuilding from scratch."""
     compact = _compact_records(new_records)
+    edits_block = _operator_edits_section(operator_edits)
 
     return f"""You are a senior maintenance technician UPDATING an existing
 operator TROUBLESHOOTING CHECKLIST for this equipment: {label}.
@@ -262,7 +284,7 @@ WITHOUT discarding the operator's edits.
 
 === UPDATED STATISTICS (whole machine) ===
 {json.dumps(stats, indent=2)}
-
+{edits_block}
 RULES:
 - PRESERVE the operator's existing wording, structure, Issue names, symptoms,
   and steps. Do NOT rewrite or reorder existing content unless a new work order
