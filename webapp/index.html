@@ -72,6 +72,18 @@
       return "bg-slate-100 text-slate-600 border-slate-200";
     }
 
+    function statusColor(st) {
+      const s = (st || "").toLowerCase();
+      if (s.includes("pending")) return "bg-amber-100 text-amber-700 border-amber-200";
+      if (s.includes("progress") || s.includes("open") || s.includes("assigned"))
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      if (s.includes("complete") || s.includes("closed") || s.includes("done"))
+        return "bg-emerald-100 text-emerald-700 border-emerald-200";
+      if (s.includes("cancel") || s.includes("void"))
+        return "bg-rose-100 text-rose-700 border-rose-200";
+      return "bg-slate-100 text-slate-600 border-slate-200";
+    }
+
     async function getJSON(url) {
       const r = await fetch(API + url);
       if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || ("HTTP " + r.status));
@@ -144,26 +156,73 @@
     /* ------------------------------------------------------------------ */
     /* Division dashboard                                                 */
     /* ------------------------------------------------------------------ */
-    function DivisionDashboard({ onOpenDept }) {
+    const DIV_TABS = ["Departments", "Weekly Schedule", "Unscheduled", "Scheduled"];
+
+    function DivisionDashboard({ onOpenDept, onOpenWo }) {
       const [data, setData] = useState(null);
       const [err, setErr] = useState(null);
+      const [tab, setTab] = useState("Departments");
+      const [woData, setWoData] = useState(null);
+      const [woErr, setWoErr] = useState(null);
 
       useEffect(() => {
         getJSON("/api/division").then(setData).catch((e) => setErr(e.message));
       }, []);
 
+      // Lazily load the division-wide work-order lists the first time the user
+      // opens the Unscheduled/Scheduled tab (it's a large payload).
+      useEffect(() => {
+        if ((tab === "Unscheduled" || tab === "Scheduled") && !woData && !woErr) {
+          getJSON("/api/workorders").then(setWoData).catch((e) => setWoErr(e.message));
+        }
+      }, [tab]);
+
       if (err) return html`<div className="text-rose-600">${err}</div>`;
       if (!data) return html`<${Spinner} label="Loading division…" />`;
+
+      const totalUns = data.departments.reduce((a, d) => a + (d.unscheduled_count || 0), 0);
+      const totalSch = data.departments.reduce((a, d) => a + (d.scheduled_count || 0), 0);
 
       return html`
         <div className="fade-in">
           <${Breadcrumb} items=${[{ label: "BLA Division" }]} />
           <h1 className="text-2xl font-extrabold text-slate-800 mb-1">BLA Division</h1>
-          <p className="text-slate-500 mb-5">Combined quick view across both departments.</p>
+          <p className="text-slate-500 mb-5">Combined quick view across all departments.</p>
           <${KpiRow} stats=${data.totals} />
 
-          <h2 className="text-lg font-bold text-slate-700 mt-8 mb-3">Departments</h2>
-          <div className="grid md:grid-cols-2 gap-5">
+          <div className="flex gap-2 mt-8 mb-6 bg-white p-1.5 rounded-full shadow-sm border border-blue-100 w-fit flex-wrap">
+            ${DIV_TABS.map((t) => html`
+              <button key=${t} onClick=${() => setTab(t)}
+                className=${"px-4 py-2 rounded-full text-sm font-semibold transition " +
+                  (tab === t ? "bg-blue-600 text-white shadow" : "text-slate-500 hover:bg-blue-50")}>
+                ${t}
+                ${t === "Unscheduled" && html`<span className="ml-1 opacity-70">(${num(totalUns)})</span>`}
+                ${t === "Scheduled" && html`<span className="ml-1 opacity-70">(${num(totalSch)})</span>`}
+              </button>`)}
+          </div>
+
+          ${tab === "Weekly Schedule" && html`
+            <div className="fade-in">
+              <${EmbeddedWeekly}
+                predicate=${() => true}
+                showDept=${true}
+                onOpenWo=${onOpenWo}
+                subtitle="All departments · scheduled & unscheduled work orders by week (Sunday → Sunday)." />
+            </div>`}
+
+          ${(tab === "Unscheduled" || tab === "Scheduled") && html`
+            <div className="fade-in">
+              ${woErr
+                ? html`<div className="text-rose-600">${woErr}</div>`
+                : !woData
+                  ? html`<${Spinner} label="Loading all work orders…" />`
+                  : html`<${WorkOrderList}
+                      records=${tab === "Unscheduled" ? woData.unscheduled : woData.scheduled}
+                      kind=${tab.toLowerCase()} onOpen=${onOpenWo} />`}
+            </div>`}
+
+          ${tab === "Departments" && html`
+          <div className="fade-in grid md:grid-cols-2 gap-5">
             ${data.departments.map((d) => html`
               <button key=${d.key} onClick=${() => onOpenDept(d.key)}
                 className="text-left bg-white rounded-3xl p-6 shadow-sm border border-blue-100
@@ -193,7 +252,7 @@
                     <div className="text-slate-500 text-xs">Downtime</div></div>
                 </div>
               </button>`)}
-          </div>
+          </div>`}
         </div>`;
     }
 
@@ -227,13 +286,16 @@
         </div>`;
     }
 
-    function DepartmentDashboard({ deptKey, onHome, onOpenMachine }) {
+    const DEPT_TABS = ["Machines", "Weekly Schedule", "Unscheduled", "Scheduled"];
+
+    function DepartmentDashboard({ deptKey, onHome, onOpenMachine, onOpenWo }) {
       const [data, setData] = useState(null);
       const [err, setErr] = useState(null);
       const [q, setQ] = useState("");
+      const [tab, setTab] = useState("Machines");
 
       useEffect(() => {
-        setData(null);
+        setData(null); setTab("Machines");
         getJSON("/api/departments/" + deptKey).then(setData).catch((e) => setErr(e.message));
       }, [deptKey]);
 
@@ -259,32 +321,64 @@
           <p className="text-slate-500 mb-5">${data.machines.length} machines · department quick view.</p>
           <${KpiRow} stats=${data.stats} />
 
-          <div className="flex items-center justify-end mt-8 mb-3 gap-3 flex-wrap">
-            <input value=${q} onInput=${(e) => setQ(e.target.value)}
-              placeholder="Search by name or EQ ID…"
-              className="px-4 py-2 rounded-full border border-blue-200 bg-white text-sm w-64
-                         focus:outline-none focus:ring-2 focus:ring-blue-300" />
+          <div className="flex gap-2 mt-8 mb-6 bg-white p-1.5 rounded-full shadow-sm border border-blue-100 w-fit flex-wrap">
+            ${DEPT_TABS.map((t) => html`
+              <button key=${t} onClick=${() => setTab(t)}
+                className=${"px-4 py-2 rounded-full text-sm font-semibold transition " +
+                  (tab === t ? "bg-blue-600 text-white shadow" : "text-slate-500 hover:bg-blue-50")}>
+                ${t}
+                ${t === "Unscheduled" && html`<span className="ml-1 opacity-70">(${data.stats.unscheduled_count})</span>`}
+                ${t === "Scheduled" && html`<span className="ml-1 opacity-70">(${data.stats.scheduled_count})</span>`}
+              </button>`)}
           </div>
 
-          ${groups.length === 0
-            ? html`<${MachineGrid} machines=${machines} onOpenMachine=${onOpenMachine} />`
-            : html`
-              <div className="space-y-8">
-                ${groups.map((g) => {
-                  const inGroup = machines.filter((m) => m.group === g);
-                  if (inGroup.length === 0) return null;
-                  return html`
-                    <section key=${g}>
-                      <div className="flex items-center gap-3 mb-3">
-                        <h3 className="text-base font-bold text-slate-700">${g}</h3>
-                        <span className="text-xs font-semibold text-blue-600 bg-blue-50 rounded-full px-2.5 py-0.5">${inGroup.length}</span>
-                        <div className="flex-1 h-px bg-blue-100"></div>
-                      </div>
-                      <${MachineGrid} machines=${inGroup} onOpenMachine=${onOpenMachine} />
-                    </section>`;
-                })}
-              </div>`}
-          ${machines.length === 0 && html`<div className="text-slate-400 mt-6">No machines match “${q}”.</div>`}
+          ${tab === "Weekly Schedule" && html`
+            <div className="fade-in">
+              <${EmbeddedWeekly}
+                predicate=${(r) => r.department_key === deptKey}
+                showDept=${false}
+                onOpenWo=${onOpenWo}
+                subtitle=${data.label + " · scheduled & unscheduled work orders by week (Sunday → Sunday)."} />
+            </div>`}
+
+          ${tab === "Machines" && html`
+            <div className="fade-in">
+              <div className="flex items-center justify-end mb-3 gap-3 flex-wrap">
+                <input value=${q} onInput=${(e) => setQ(e.target.value)}
+                  placeholder="Search by name or EQ ID…"
+                  className="px-4 py-2 rounded-full border border-blue-200 bg-white text-sm w-64
+                             focus:outline-none focus:ring-2 focus:ring-blue-300" />
+              </div>
+              ${groups.length === 0
+                ? html`<${MachineGrid} machines=${machines} onOpenMachine=${onOpenMachine} />`
+                : html`
+                  <div className="space-y-8">
+                    ${groups.map((g) => {
+                      const inGroup = machines.filter((m) => m.group === g);
+                      if (inGroup.length === 0) return null;
+                      return html`
+                        <section key=${g}>
+                          <div className="flex items-center gap-3 mb-3">
+                            <h3 className="text-base font-bold text-slate-700">${g}</h3>
+                            <span className="text-xs font-semibold text-blue-600 bg-blue-50 rounded-full px-2.5 py-0.5">${inGroup.length}</span>
+                            <div className="flex-1 h-px bg-blue-100"></div>
+                          </div>
+                          <${MachineGrid} machines=${inGroup} onOpenMachine=${onOpenMachine} />
+                        </section>`;
+                    })}
+                  </div>`}
+              ${machines.length === 0 && html`<div className="text-slate-400 mt-6">No machines match “${q}”.</div>`}
+            </div>`}
+
+          ${tab === "Unscheduled" && html`
+            <div className="fade-in">
+              <${WorkOrderList} records=${data.unscheduled} kind="unscheduled" onOpen=${onOpenWo} />
+            </div>`}
+
+          ${tab === "Scheduled" && html`
+            <div className="fade-in">
+              <${WorkOrderList} records=${data.scheduled} kind="scheduled" onOpen=${onOpenWo} />
+            </div>`}
         </div>`;
     }
 
@@ -294,9 +388,20 @@
     function WorkOrderList({ records, kind, onOpen }) {
       const [q, setQ] = useState("");
       if (!records || records.length === 0)
-        return html`<div className="text-slate-400 py-8 text-center">No ${kind} work orders for this machine.</div>`;
+        return html`<div className="text-slate-400 py-8 text-center">No ${kind} work orders.</div>`;
 
-      const filtered = records.filter((r) => {
+      // Always show newest first. Scheduled orders by due date, unscheduled by
+      // the date they were reported; undated records sort to the bottom.
+      const woTime = (r) => {
+        const raw = kind === "scheduled"
+          ? (r.due_date || r.date_notified)
+          : (r.date_notified || r.due_date);
+        const t = parseWODate(raw);
+        return t === Infinity ? -Infinity : t;
+      };
+      const sorted = [...records].sort((a, b) => woTime(b) - woTime(a));
+
+      const filtered = sorted.filter((r) => {
         const s = q.trim().toLowerCase();
         if (!s) return true;
         return (r.wo_id || "").toLowerCase().includes(s) ||
@@ -319,7 +424,8 @@
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-bold text-blue-700">WO #${r.wo_id}</span>
                     ${r.urgency && html`<span className=${"text-xs px-2 py-0.5 rounded-full border " + urgencyColor(r.urgency)}>${r.urgency}</span>`}
-                    ${r.status && html`<span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">${r.status}</span>`}
+                    ${r.status && html`<span className=${"text-xs px-2 py-0.5 rounded-full border " + statusColor(r.status)}>${r.status}</span>`}
+                    ${r.department_label && html`<span className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">${r.department_label}</span>`}
                   </div>
                   <div className="text-xs text-slate-400 whitespace-nowrap">${r.date_notified || r.due_date || ""}</div>
                 </div>
@@ -328,7 +434,7 @@
                   <span>Labor ${hours(r.labor_time)}</span>
                   <span>Material ${money(r.material_cost)}</span>
                   <span>Downtime ${hours(r.downtime_hours)}</span>
-                  ${(r.attachments && r.attachments.length > 0) && html`<span className="text-blue-500 font-semibold">📎 ${r.attachments.length}</span>`}
+                  ${(() => { const n = r.attachment_count != null ? r.attachment_count : (r.attachments ? r.attachments.length : 0); return n > 0 && html`<span className="text-blue-500 font-semibold">📎 ${n}</span>`; })()}
                 </div>
               </button>`)}
           </div>
@@ -556,7 +662,7 @@
     /* ------------------------------------------------------------------ */
     /* Machine view (4 tabs)                                              */
     /* ------------------------------------------------------------------ */
-    const TABS = ["Dashboard", "Checklist", "Unscheduled", "Scheduled"];
+    const TABS = ["Dashboard", "Weekly", "Checklist", "Unscheduled", "Scheduled"];
 
     function MachineView({ deptKey, eqId, deptLabel, onHome, onOpenDept, onOpenWo }) {
       const [data, setData] = useState(null);
@@ -610,6 +716,15 @@
               </p>
             </div>`}
 
+          ${tab === "Weekly" && html`
+            <div className="fade-in">
+              <${EmbeddedWeekly}
+                predicate=${(r) => String(r.equipment_id) === String(eqId)}
+                showDept=${false}
+                onOpenWo=${onOpenWo}
+                subtitle=${m.name + " · scheduled & unscheduled work orders by week (Sunday → Sunday)."} />
+            </div>`}
+
           ${tab === "Checklist" && html`
             <div className="fade-in">
               <${ChecklistTab} deptKey=${deptKey} eqId=${eqId} woIds=${woIds} onOpenWo=${onOpenWo} />
@@ -636,6 +751,37 @@
       { key: "next", label: "Next Week", accent: "border-emerald-300", head: "bg-emerald-600 text-white" },
     ];
 
+    // Parse "MM/DD/YYYY" or "MM/DD/YYYY HH:MM" into a sortable timestamp.
+    // Missing/unparseable dates sort last.
+    function parseWODate(s) {
+      if (!s) return Infinity;
+      const m = String(s).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
+      if (!m) return Infinity;
+      return new Date(+m[3], +m[1] - 1, +m[2], +(m[4] || 0), +(m[5] || 0)).getTime();
+    }
+
+    // Collect work orders into the three week buckets for the records that
+    // match `predicate`, then order each list by date: scheduled soonest-due
+    // first, unscheduled oldest-notified first (oldest to complete first).
+    function buildBuckets(data, predicate) {
+      const b = {
+        last: { scheduled: [], unscheduled: [] },
+        this: { scheduled: [], unscheduled: [] },
+        next: { scheduled: [], unscheduled: [] },
+      };
+      data.departments.forEach((d) => {
+        WEEK_DEFS.forEach(({ key }) => {
+          (d.weeks[key]?.scheduled || []).forEach((r) => { if (predicate(r)) b[key].scheduled.push(r); });
+          (d.weeks[key]?.unscheduled || []).forEach((r) => { if (predicate(r)) b[key].unscheduled.push(r); });
+        });
+      });
+      Object.values(b).forEach((w) => {
+        w.scheduled.sort((a, c) => parseWODate(a.due_date) - parseWODate(c.due_date));
+        w.unscheduled.sort((a, c) => parseWODate(a.date_notified) - parseWODate(c.date_notified));
+      });
+      return b;
+    }
+
     function WeekWORow({ r, showDept, deptLabels, onOpenWo }) {
       const when = r.wo_type === "scheduled" ? r.due_date : r.date_notified;
       return html`
@@ -649,7 +795,7 @@
           <div className="text-xs text-slate-600 mt-0.5 line-clamp-2">${r.problem || r.audit_item || r.equipment_name || "—"}</div>
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             <span className="text-[11px] text-slate-500 truncate max-w-[11rem]">${r.equipment_name || ""}</span>
-            ${r.status && html`<span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">${r.status}</span>`}
+            ${r.status && html`<span className=${"text-[10px] px-1.5 py-0.5 rounded-full border " + statusColor(r.status)}>${r.status}</span>`}
             ${showDept && deptLabels[r.department_key] && html`<span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">${deptLabels[r.department_key]}</span>`}
           </div>
         </button>`;
@@ -689,6 +835,41 @@
         </section>`;
     }
 
+    // Pure presentational: renders the three week columns for whatever records
+    // match `predicate`. Reused by the top-level tab, the department view and
+    // the machine view.
+    function WeeklyPanels({ data, predicate, showDept, onOpenWo }) {
+      const deptLabels = {};
+      data.departments.forEach((d) => { deptLabels[d.key] = d.label; });
+      const buckets = buildBuckets(data, predicate);
+      return html`
+        <div className="grid md:grid-cols-3 gap-4">
+          ${WEEK_DEFS.map((def) => html`
+            <${WeekColumn} key=${def.key} def=${def} week=${data.weeks[def.key]}
+              bucket=${buckets[def.key]} showDept=${showDept}
+              deptLabels=${deptLabels} onOpenWo=${onOpenWo} />`)}
+        </div>`;
+    }
+
+    // Fetches /api/weekly and renders panels for a fixed scope (department or
+    // machine). Used embedded inside the department and machine views so the
+    // relevant weekly schedule shows up automatically - no manual filtering.
+    function EmbeddedWeekly({ predicate, showDept, onOpenWo, title, subtitle }) {
+      const [data, setData] = useState(null);
+      const [err, setErr] = useState(null);
+      useEffect(() => {
+        getJSON("/api/weekly").then(setData).catch((e) => setErr(e.message));
+      }, []);
+      if (err) return html`<div className="text-rose-600 text-sm">${err}</div>`;
+      if (!data) return html`<${Spinner} label="Loading weekly schedule…" />`;
+      return html`
+        <div className="fade-in">
+          ${title && html`<h2 className="text-lg font-extrabold text-slate-800">${title}</h2>`}
+          ${subtitle && html`<p className="text-slate-500 text-sm mb-4">${subtitle}</p>`}
+          <${WeeklyPanels} data=${data} predicate=${predicate} showDept=${showDept} onOpenWo=${onOpenWo} />
+        </div>`;
+    }
+
     function WeeklyDashboard({ onOpenWo }) {
       const [data, setData] = useState(null);
       const [err, setErr] = useState(null);
@@ -701,21 +882,7 @@
       if (err) return html`<div className="text-rose-600">${err}</div>`;
       if (!data) return html`<${Spinner} label="Loading weekly schedule…" />`;
 
-      const deptLabels = {};
-      data.departments.forEach((d) => { deptLabels[d.key] = d.label; });
-
-      // Build the buckets for the selected scope ("all" = combine departments).
-      const empty = () => ({ scheduled: [], unscheduled: [] });
-      const buckets = { last: empty(), this: empty(), next: empty() };
-      const source = scope === "all"
-        ? data.departments
-        : data.departments.filter((d) => d.key === scope);
-      source.forEach((d) => {
-        WEEK_DEFS.forEach(({ key }) => {
-          buckets[key].scheduled.push(...(d.weeks[key]?.scheduled || []));
-          buckets[key].unscheduled.push(...(d.weeks[key]?.unscheduled || []));
-        });
-      });
+      const predicate = scope === "all" ? () => true : (r) => r.department_key === scope;
 
       return html`
         <div className="fade-in">
@@ -732,12 +899,7 @@
               ${data.departments.map((d) => html`<option key=${d.key} value=${d.key}>${d.label}</option>`)}
             </select>
           </div>
-          <div className="grid md:grid-cols-3 gap-4">
-            ${WEEK_DEFS.map((def) => html`
-              <${WeekColumn} key=${def.key} def=${def} week=${data.weeks[def.key]}
-                bucket=${buckets[def.key]} showDept=${scope === "all"}
-                deptLabels=${deptLabels} onOpenWo=${onOpenWo} />`)}
-          </div>
+          <${WeeklyPanels} data=${data} predicate=${predicate} showDept=${scope === "all"} onOpenWo=${onOpenWo} />
         </div>`;
     }
 
@@ -758,31 +920,18 @@
       const openDept = (deptKey) => setRoute({ view: "department", deptKey });
       const openMachine = (eqId) =>
         setRoute((r) => ({ view: "machine", deptKey: r.deptKey, eqId }));
-      const openWeekly = () => setRoute({ view: "weekly" });
-
-      const onOverview = ["division", "department", "machine"].includes(route.view);
-      const navBtn = (active) =>
-        "px-4 py-2 rounded-full text-sm font-semibold transition " +
-        (active ? "bg-blue-600 text-white shadow" : "text-slate-600 hover:bg-blue-50");
 
       return html`
         <div className="min-h-screen">
           <${Header} />
-          <div className="max-w-6xl mx-auto px-6 pt-5">
-            <nav className="flex gap-2 bg-white p-1.5 rounded-full shadow-sm border border-blue-100 w-fit">
-              <button onClick=${goHome} className=${navBtn(onOverview)}>Overview</button>
-              <button onClick=${openWeekly} className=${navBtn(route.view === "weekly")}>Weekly Schedule</button>
-            </nav>
-          </div>
-          <main className="max-w-6xl mx-auto px-6 py-6">
-            ${route.view === "division" && html`<${DivisionDashboard} onOpenDept=${openDept} />`}
+          <main className="max-w-6xl mx-auto px-6 py-8">
+            ${route.view === "division" && html`<${DivisionDashboard} onOpenDept=${openDept} onOpenWo=${setWoId} />`}
             ${route.view === "department" && html`
-              <${DepartmentDashboard} deptKey=${route.deptKey} onHome=${goHome} onOpenMachine=${openMachine} />`}
+              <${DepartmentDashboard} deptKey=${route.deptKey} onHome=${goHome} onOpenMachine=${openMachine} onOpenWo=${setWoId} />`}
             ${route.view === "machine" && html`
               <${MachineView} deptKey=${route.deptKey} eqId=${route.eqId}
                 deptLabel=${DEPT_LABELS[route.deptKey]}
                 onHome=${goHome} onOpenDept=${openDept} onOpenWo=${setWoId} />`}
-            ${route.view === "weekly" && html`<${WeeklyDashboard} onOpenWo=${setWoId} />`}
           </main>
           ${woId && html`<${WorkOrderModal} woId=${woId} onClose=${() => setWoId(null)} onOpenWo=${setWoId} />`}
         </div>`;

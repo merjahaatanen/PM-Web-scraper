@@ -397,6 +397,35 @@ def _stats(unscheduled: list[dict], scheduled: list[dict]) -> dict:
     return t
 
 
+def _compact_wo(r: dict) -> dict:
+    """A lightweight work-order record for list views (drops heavy 'comments'
+    and attachment payloads; keeps an attachment count and department label)."""
+    return {
+        "wo_id": r.get("wo_id"),
+        "equipment_id": r.get("equipment_id"),
+        "equipment_name": r.get("equipment_name"),
+        "department_key": r.get("department_key"),
+        "department_label": DEPARTMENTS.get(r.get("department_key"), {}).get("label"),
+        "status": r.get("status"),
+        "urgency": r.get("urgency"),
+        "problem": r.get("problem"),
+        "audit_item": r.get("audit_item"),
+        "date_notified": r.get("date_notified"),
+        "due_date": r.get("due_date"),
+        "labor_time": r.get("labor_time"),
+        "material_cost": r.get("material_cost"),
+        "downtime_hours": r.get("downtime_hours"),
+        "attachment_count": len(r.get("attachments") or []),
+    }
+
+
+def _sorted_desc(records: list[dict], date_field: str) -> list[dict]:
+    """Compact + sort newest -> oldest by date_field. Undated records last."""
+    def key(r):
+        return ae._parse_date(r.get(date_field)) or datetime.min
+    return [_compact_wo(r) for r in sorted(records, key=key, reverse=True)]
+
+
 def _machine_groups(dept_key: str) -> dict[str, dict[str, list[dict]]]:
     """Group a department's work orders by equipment_id (the EQ ID)."""
     data = _DEPT_DATA.get(dept_key)
@@ -556,7 +585,26 @@ def api_department(dept_key):
         "stats": _stats(data["unscheduled"], data["scheduled"]),
         "machines": machines,
         "groups": groups,
+        "unscheduled": _sorted_desc(data["unscheduled"], "date_notified"),
+        "scheduled": _sorted_desc(data["scheduled"], "due_date"),
     })
+
+
+@app.route("/api/workorders")
+def api_workorders():
+    """All departments' work orders (compact, newest -> oldest). Powers the
+    home-page 'Unscheduled' / 'Scheduled' tabs that span the whole division."""
+    with _DATA_LOCK:
+        uns, sch = [], []
+        for key, cfg in DEPARTMENTS.items():
+            data = _DEPT_DATA.get(key, {"unscheduled": [], "scheduled": []})
+            uns.extend(data["unscheduled"])
+            sch.extend(data["scheduled"])
+        return jsonify({
+            "stats": _stats(uns, sch),
+            "unscheduled": _sorted_desc(uns, "date_notified"),
+            "scheduled": _sorted_desc(sch, "due_date"),
+        })
 
 
 # --------------------------------------------------------------------------- #
