@@ -196,5 +196,23 @@
     "completed_datetime": "02/06/2023 12:00 AM",
     "comments": "Primo Uy - 02/06/23  1:45:17 PM: Done.",
     "attachments": []
+  },
+  {
+    "equipment_id": "",
+    "equipment_eq_id": "",
+    "equipment_name": "",
+    "department": "Mfg Engineering",
+    "wo_id": "19974",
+    "date_notified": "06/26/2026",
+    "urgency": "6. General Maint",
+    "problem": "My desk does not have power to it. It seems like others around me have had this problem recently and have had it fixed, however my desk still does not have power.",
+    "status": "Pending",
+    "material_cost": "0",
+    "labor_time": "0",
+    "work_performed_by": "",
+    "downtime_hours": "0",
+    "completed_datetime": "",
+    "comments": "",
+    "attachments": []
   }
 ]

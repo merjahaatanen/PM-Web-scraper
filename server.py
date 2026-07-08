@@ -665,6 +665,20 @@ def api_workorder(wo_id):
     return jsonify(rec)
 
 
+@app.route("/api/reload", methods=["POST"])
+def api_reload():
+    """Re-read the work-order + equipment files into the in-memory caches
+    WITHOUT restarting the server. Useful right after a scrape (including the
+    equipment-less 'orphan' unscheduled WOs) so the dashboard reflects the new
+    data immediately."""
+    ts = reload_data()
+    return jsonify({
+        "status": "reloaded",
+        "reloaded_at": ts.isoformat(),
+        "work_orders_indexed": len(_WO_INDEX),
+    })
+
+
 # --------------------------------------------------------------------------- #
 # Per-machine troubleshooting checklist (Ollama)
 # --------------------------------------------------------------------------- #

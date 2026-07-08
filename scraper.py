@@ -70,6 +70,11 @@ except Exception:
 BASE_URL     = "https://circaweb.bobrick.com"
 EQUIP_ALL    = f"{BASE_URL}/PME/Forms/EquipmentAll"
 DASH_URL     = f"{BASE_URL}/PME/Forms/EquipmentDash"
+# Division-wide Unscheduled Work Orders list. Unlike the per-equipment
+# dashboards, this page also lists work orders with NO equipment attached
+# (facility / general requests), which the equipment-centric scrape can never
+# reach. We use it to capture those "orphan" work orders.
+WOU_ALL      = f"{BASE_URL}/PME/Forms/WorkOrderUnshdAll"
 DEBUGGER     = "127.0.0.1:9222"
 OUTPUT_DIR   = os.path.dirname(os.path.abspath(__file__))
 SAVE_EVERY   = 25      # checkpoint to disk every N equipment records
@@ -147,6 +152,28 @@ def _write_html(path: str, html: str):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)
+
+
+_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def _strip_html(s: str) -> str:
+    """Strip HTML tags/entities from a grid cell value (e.g. the Comment column
+    arrives as '<span ...>Name - date:</span>text')."""
+    import html as _html
+    s = _TAG_RE.sub("", s or "")
+    return _html.unescape(s).replace("\xa0", " ").strip()
+
+
+def _num(v) -> str:
+    """Normalise a numeric grid value to a plain string ('' for empty)."""
+    if v is None or v == "":
+        return ""
+    try:
+        f = float(v)
+        return str(int(f)) if f == int(f) else str(f)
+    except (TypeError, ValueError):
+        return str(v)
 
 
 def _snapshot_full_page(driver, path: str):
@@ -609,12 +636,23 @@ class WorkOrderScraper:
         # only replaces the work orders for the equipment ids it touched.
         self.partial = False
         self.scraped_ids: set = set()
+        # Equipment ids whose grid never loaded this run (dashboard/grid never
+        # settled after retries). Their existing data must be PRESERVED, not
+        # overwritten with a false zero. Tracked per kind because a machine can
+        # load one grid but not the other.
+        self.failed_unscheduled_ids: set = set()
+        self.failed_scheduled_ids: set = set()
         # When True, also open each scheduled WO's dialog to capture attachments
         # (slow). Core fields are always read from the grid regardless.
         self.swo_attachments = True
         # When True, skip unscheduled WOs entirely (only refresh the scheduled
         # grid data) and leave work_orders_unscheduled.* untouched.
         self.skip_unscheduled = False
+        # When True, scrape ONLY the division-wide equipment-less ("orphan")
+        # unscheduled work orders (facility / general requests) and merge them
+        # into the per-department + master unscheduled files, leaving all
+        # equipment-linked data untouched.
+        self.orphans_only = False
         # When True, mirror every page the scraper visits to PAGES_DIR so the
         # whole scrape can later be replayed offline.
         self.capture_html = True
@@ -772,29 +810,58 @@ class WorkOrderScraper:
         return ids
 
     # ------------------------------------------------------------------
-    def _wait_for_wou_rows(self, timeout: int = 8):
-        sel = "#gridWOU .k-grid-content tbody tr.k-master-row"
-        end = time.time() + timeout
-        while time.time() < end:
-            rows = self.driver.find_elements(By.CSS_SELECTOR, sel)
-            if rows:
-                return rows
-            if self.driver.find_elements(By.CSS_SELECTOR, "#gridWOU .k-grid-norecords"):
-                return []
-            time.sleep(0.3)
-        return self.driver.find_elements(By.CSS_SELECTOR, sel)
+    def _load_grid_rows(self, grid_sel: str, timeout: int = 20):
+        """Wait for a Kendo grid to finish loading and return (rows, confirmed_empty).
 
-    def _wait_for_wos_rows(self, timeout: int = 8):
-        sel = "#gridWOS .k-grid-content tbody tr.k-master-row"
+        The old logic returned [] as soon as it saw either no rows after 8s OR a
+        `.k-grid-norecords` element. Under heavy parallel load the grid's AJAX
+        often had not finished within 8s, and Kendo briefly renders a
+        "no records" placeholder while (re)binding - so a machine that actually
+        had work orders was silently recorded with zero. That data was then lost
+        because the per-department output file is overwritten, not merged.
+
+        This version:
+          * waits until the grid is NOT actively loading (no .k-loading-mask),
+          * treats the empty/"no records" state as real ONLY when it persists
+            across several settled checks (so a transient placeholder during
+            binding is ignored),
+          * uses a longer default timeout, and
+          * reports `confirmed_empty=False` when it timed out WITHOUT ever
+            reaching a definitive state, so the caller can retry instead of
+            recording a false zero.
+        """
+        row_sel   = f"{grid_sel} .k-grid-content tbody tr.k-master-row"
+        norec_sel = f"{grid_sel} .k-grid-norecords"
+        load_sel  = f"{grid_sel} .k-loading-mask, {grid_sel} .k-loading"
         end = time.time() + timeout
+        empty_confirmations = 0
         while time.time() < end:
-            rows = self.driver.find_elements(By.CSS_SELECTOR, sel)
+            # Do not trust the grid contents while Kendo is (re)binding.
+            if self.driver.find_elements(By.CSS_SELECTOR, load_sel):
+                empty_confirmations = 0
+                time.sleep(0.3)
+                continue
+            rows = self.driver.find_elements(By.CSS_SELECTOR, row_sel)
             if rows:
-                return rows
-            if self.driver.find_elements(By.CSS_SELECTOR, "#gridWOS .k-grid-norecords"):
-                return []
+                return rows, False
+            if self.driver.find_elements(By.CSS_SELECTOR, norec_sel):
+                empty_confirmations += 1
+                # Require the empty state to hold before believing it.
+                if empty_confirmations >= 3:
+                    return [], True
+            else:
+                empty_confirmations = 0
             time.sleep(0.3)
-        return self.driver.find_elements(By.CSS_SELECTOR, sel)
+        # Timed out without a settled state. Return whatever is there, but flag
+        # it as NOT a confirmed empty so the caller can retry the dashboard.
+        rows = self.driver.find_elements(By.CSS_SELECTOR, row_sel)
+        return rows, bool(rows)
+
+    def _wait_for_wou_rows(self, timeout: int = 20):
+        return self._load_grid_rows("#gridWOU", timeout)[0]
+
+    def _wait_for_wos_rows(self, timeout: int = 20):
+        return self._load_grid_rows("#gridWOS", timeout)[0]
 
     # ------------------------------------------------------------------
     def scrape_equipment(self, equipment: dict) -> List[WorkOrderDetail]:
@@ -805,28 +872,47 @@ class WorkOrderScraper:
         eq_display = equipment["eq_id"]
         eq_dept    = equipment.get("dept", "")
 
-        self.driver.get(f"{DASH_URL}/{eq_num}")
-        try:
-            WebDriverWait(self.driver, 15).until(
-                EC.presence_of_element_located((By.ID, "EqpDash"))
-            )
-        except TimeoutException:
-            print(f"  [{eq_display}] dashboard timed out - skipping")
-            return []
+        # Load the dashboard and read the unscheduled grid. If the grid never
+        # settles into a definitive state (rows OR a persistent "no records"),
+        # reload once before believing it is empty - a false zero here would be
+        # written to the per-department file and permanently lose that machine's
+        # work orders (the file is overwritten, not merged).
+        equipment_name = ""
+        rows, confirmed_empty = [], False
+        for attempt in (1, 2):
+            self.driver.get(f"{DASH_URL}/{eq_num}")
+            try:
+                WebDriverWait(self.driver, 15).until(
+                    EC.presence_of_element_located((By.ID, "EqpDash"))
+                )
+            except TimeoutException:
+                print(f"  [{eq_display}] dashboard timed out "
+                      f"(try {attempt}) - retrying" if attempt == 1
+                      else f"  [{eq_display}] dashboard timed out - skipping")
+                continue
 
-        # Activate Unscheduled Work Orders tab
-        try:
-            self.driver.execute_script(
-                "arguments[0].click();",
-                self.driver.find_element(By.ID, "eqpdashuwo-tab")
-            )
-        except NoSuchElementException:
-            pass
+            # Activate Unscheduled Work Orders tab
+            try:
+                self.driver.execute_script(
+                    "arguments[0].click();",
+                    self.driver.find_element(By.ID, "eqpdashuwo-tab")
+                )
+            except NoSuchElementException:
+                pass
 
-        equipment_name = _safe_text(self.driver, "#lblEqpED")
-        rows = self._wait_for_wou_rows()
+            equipment_name = _safe_text(self.driver, "#lblEqpED")
+            rows, confirmed_empty = self._load_grid_rows("#gridWOU")
+            if rows or confirmed_empty:
+                break
+            if attempt == 1:
+                print(f"  [{eq_display}] unscheduled grid did not settle - retrying")
 
         if not rows:
+            if not confirmed_empty:
+                print(f"  [{eq_display}] WARNING: unscheduled grid never loaded "
+                      "- leaving prior data untouched")
+                self.failed_unscheduled_ids.add(str(eq_num).strip())
+                return []
             print(f"  [{eq_display}] 0 unscheduled work orders")
             return []
 
@@ -925,28 +1011,38 @@ class WorkOrderScraper:
         eq_dept    = equipment.get("dept", "")
 
         # Reuse the dashboard if we're already on it (scrape_equipment just ran);
-        # otherwise navigate to it.
-        if f"{DASH_URL}/{eq_num}" not in self.driver.current_url:
-            self.driver.get(f"{DASH_URL}/{eq_num}")
+        # otherwise navigate to it. If the scheduled grid never settles, reload
+        # once before believing it is empty (same false-zero hazard as the
+        # unscheduled grid).
+        equipment_name = ""
+        rows, confirmed_empty = [], False
+        for attempt in (1, 2):
+            if f"{DASH_URL}/{eq_num}" not in self.driver.current_url or attempt == 2:
+                self.driver.get(f"{DASH_URL}/{eq_num}")
+                try:
+                    WebDriverWait(self.driver, 15).until(
+                        EC.presence_of_element_located((By.ID, "EqpDash"))
+                    )
+                except TimeoutException:
+                    print(f"  [{eq_display}] dashboard timed out (scheduled) - "
+                          f"{'retrying' if attempt == 1 else 'skipping'}")
+                    continue
+
+            # Activate Scheduled Work Orders tab
             try:
-                WebDriverWait(self.driver, 15).until(
-                    EC.presence_of_element_located((By.ID, "EqpDash"))
+                self.driver.execute_script(
+                    "arguments[0].click();",
+                    self.driver.find_element(By.ID, "eqpdashswo-tab")
                 )
-            except TimeoutException:
-                print(f"  [{eq_display}] dashboard timed out (scheduled) - skipping")
-                return []
+            except NoSuchElementException:
+                pass
 
-        # Activate Scheduled Work Orders tab
-        try:
-            self.driver.execute_script(
-                "arguments[0].click();",
-                self.driver.find_element(By.ID, "eqpdashswo-tab")
-            )
-        except NoSuchElementException:
-            pass
-
-        equipment_name = _safe_text(self.driver, "#lblEqpED")
-        rows = self._wait_for_wos_rows()
+            equipment_name = _safe_text(self.driver, "#lblEqpED")
+            rows, confirmed_empty = self._load_grid_rows("#gridWOS")
+            if rows or confirmed_empty:
+                break
+            if attempt == 1:
+                print(f"  [{eq_display}] scheduled grid did not settle - retrying")
 
         # Mirror the whole dashboard (both UWO + SWO grids are now populated)
         # and record equipment metadata so an offline replay can find it.
@@ -958,6 +1054,11 @@ class WorkOrderScraper:
             )
 
         if not rows:
+            if not confirmed_empty:
+                print(f"  [{eq_display}] WARNING: scheduled grid never loaded "
+                      "- leaving prior data untouched")
+                self.failed_scheduled_ids.add(str(eq_num).strip())
+                return []
             print(f"  [{eq_display}] 0 scheduled work orders")
             return []
 
@@ -1046,6 +1147,109 @@ class WorkOrderScraper:
                 continue
 
         print(f"  [{eq_display}] {equipment_name[:45]!r}: {len(records)} scheduled work orders scraped")
+        return records
+
+    # ------------------------------------------------------------------
+    # Division-wide "orphan" unscheduled work orders (no equipment attached)
+    # ------------------------------------------------------------------
+    # Read the whole #gridWOU dataSource on the WorkOrderUnshdAll page. Kendo
+    # keeps the full dataset in memory, so this returns every row regardless of
+    # the grid's virtual-scroll state (avoids scraping a virtualised DOM).
+    _WOU_ALL_ROWS_JS = r"""
+    var jq = window.jQuery || window.$;
+    var el = document.getElementById('gridWOU');
+    if (!el) return [];
+    var g = jq(el).data('kendoGrid');
+    if (!g) return [];
+    var data = g.dataSource.data(), out = [];
+    for (var i = 0; i < data.length; i++) {
+      var m = data[i].toJSON ? data[i].toJSON() : data[i];
+      out.push(m);
+    }
+    return out;
+    """
+
+    def scrape_orphan_unscheduled(self) -> List[WorkOrderDetail]:
+        """Scrape unscheduled work orders that have NO equipment attached
+        (facility / general requests) from the division-wide WorkOrderUnshdAll
+        list. Equipment-linked WOs are already captured per-equipment, so only
+        rows with a blank EquipmentName are kept. Each orphan's Problem text and
+        owning Department come from its Edit dialog."""
+        if self.offline:
+            return self._scrape_orphan_unscheduled_offline()
+
+        self.driver.get(WOU_ALL)
+        try:
+            WebDriverWait(self.driver, 30).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "[data-role=grid]"))
+            )
+        except TimeoutException:
+            print("  [orphans] WorkOrderUnshdAll grid never appeared - skipping")
+            return []
+        # Let the Kendo dataSource finish its initial read.
+        time.sleep(3)
+        for _ in range(20):
+            rows = self.driver.execute_script(self._WOU_ALL_ROWS_JS) or []
+            if rows:
+                break
+            time.sleep(0.5)
+
+        if self.capture_html:
+            _snapshot_full_page(
+                self.driver, os.path.join(self.pages_dir, "unscheduled_all.html")
+            )
+
+        orphans = [r for r in rows if not str(r.get("EquipmentName") or "").strip()]
+        print(f"  [orphans] {len(rows)} division WOs, "
+              f"{len(orphans)} with no equipment attached")
+
+        records = []
+        for r in orphans:
+            wo_id = str(r.get("ID") or "").strip()
+            if not wo_id:
+                continue
+            dialog_data = {}
+            department = ""
+            try:
+                self.driver.execute_script(
+                    f"WorkOrderUnshdMgr.EditWorkOrderUnschd({wo_id});"
+                )
+                dialog_data = scrape_wo_dialog(self.driver, wo_id)
+                department = (_safe_text(self.driver, "#lblDepartmentWO")
+                              or _safe_text(self.driver, "#lblDepartmentWO", "textContent"))
+                if self.capture_html:
+                    _snapshot_dialog(
+                        self.driver,
+                        os.path.join(self.pages_dir, "unscheduled_all",
+                                     f"{wo_id}.html"),
+                        title=f"UWO {wo_id}",
+                    )
+            except Exception as e:
+                print(f"  [orphans] WO {wo_id} error: {e}")
+            finally:
+                _close_dialog(self.driver)
+                time.sleep(0.2)
+
+            records.append(WorkOrderDetail(
+                equipment_id      = "",
+                equipment_eq_id   = "",
+                equipment_name    = "",
+                department        = department.strip(),
+                wo_id             = wo_id,
+                date_notified     = dialog_data.get("date_notified", ""),
+                urgency           = dialog_data.get("urgency", ""),
+                problem           = dialog_data.get("problem", ""),
+                status            = dialog_data.get("status", "") or (r.get("WOStatusDsc") or ""),
+                material_cost     = dialog_data.get("material_cost", "") or _num(r.get("MaterialCost")),
+                labor_time        = dialog_data.get("labor_time", "") or _num(r.get("LaborTime")),
+                work_performed_by = dialog_data.get("work_performed_by", "") or (r.get("WorkPerformedBy") or ""),
+                downtime_hours    = dialog_data.get("downtime_hours", "") or _num(r.get("DownTime")),
+                completed_datetime= dialog_data.get("completed_datetime", "") or (r.get("CompletedDateTime") or ""),
+                comments          = dialog_data.get("comments", "") or _strip_html(r.get("Comment") or ""),
+                attachments       = dialog_data.get("attachments") or [],
+            ))
+
+        print(f"  [orphans] scraped {len(records)} equipment-less work orders")
         return records
 
     # ------------------------------------------------------------------
@@ -1187,32 +1391,96 @@ class WorkOrderScraper:
         print(f"  [{eq_display}] {equipment_name[:45]!r}: {len(records)} scheduled work orders (offline)")
         return records
 
+    def _scrape_orphan_unscheduled_offline(self) -> List[WorkOrderDetail]:
+        """Replay equipment-less work orders from the captured dialog snapshots
+        in pages/unscheduled_all/<wo_id>.html."""
+        odir = os.path.join(self.pages_dir, "unscheduled_all")
+        if not os.path.isdir(odir):
+            print("  [orphans] no captured unscheduled_all dialogs - skipping")
+            return []
+        records = []
+        for fn in sorted(os.listdir(odir)):
+            if not fn.endswith(".html"):
+                continue
+            wo_id = fn[:-5]
+            if not self._load_file(os.path.join(odir, fn)):
+                continue
+            dialog_data = scrape_wo_dialog(self.driver, wo_id, require_visible=False)
+            department = (_safe_text(self.driver, "#lblDepartmentWO")
+                          or _safe_text(self.driver, "#lblDepartmentWO", "textContent"))
+            records.append(WorkOrderDetail(
+                equipment_id      = "",
+                equipment_eq_id   = "",
+                equipment_name    = "",
+                department        = department.strip(),
+                wo_id             = wo_id,
+                date_notified     = dialog_data.get("date_notified", ""),
+                urgency           = dialog_data.get("urgency", ""),
+                problem           = dialog_data.get("problem", ""),
+                status            = dialog_data.get("status", ""),
+                material_cost     = dialog_data.get("material_cost", ""),
+                labor_time        = dialog_data.get("labor_time", ""),
+                work_performed_by = dialog_data.get("work_performed_by", ""),
+                downtime_hours    = dialog_data.get("downtime_hours", ""),
+                completed_datetime= dialog_data.get("completed_datetime", ""),
+                comments          = dialog_data.get("comments", ""),
+                attachments       = dialog_data.get("attachments") or [],
+            ))
+        print(f"  [orphans] {len(records)} equipment-less work orders (offline)")
+        return records
+
     # ------------------------------------------------------------------
-    def _persist(self, records, dataclass_type, json_name, csv_name, label):
-        """Write records to JSON + CSV, merging on equipment_id when partial."""
+    def _persist(self, records, dataclass_type, json_name, csv_name, label,
+                 failed_ids: Optional[set] = None):
+        """Write records to JSON + CSV, merging on equipment_id when partial.
+
+        `failed_ids` are equipment whose grid never loaded this run; their
+        existing records are ALWAYS carried over (never overwritten with a false
+        zero), even in overwrite mode, so a transient load failure can't wipe a
+        machine's data.
+        """
         csv_path  = os.path.join(OUTPUT_DIR, csv_name)
         json_path = os.path.join(OUTPUT_DIR, json_name)
+        failed_ids = {str(i).strip() for i in (failed_ids or set())}
 
         fields = [f for f in dataclass_type.__dataclass_fields__]
         rows = [asdict(r) for r in records]
 
-        if self.partial and self.scraped_ids:
-            # Merge: keep every existing record EXCEPT the equipment ids we
-            # just re-scraped, then append the freshly scraped records. This
-            # preserves all other machines' data on a single-machine scrape.
-            existing = []
+        def _read_existing():
             if os.path.exists(json_path):
                 try:
                     with open(json_path, encoding="utf-8") as f:
-                        existing = json.load(f)
+                        return json.load(f)
                 except (json.JSONDecodeError, OSError) as e:
-                    print(f"  WARNING: could not read existing {json_path} ({e}); "
-                          f"writing scraped records only.")
+                    print(f"  WARNING: could not read existing {json_path} ({e}).")
+            return []
+
+        if self.partial and self.scraped_ids:
+            # Merge: keep every existing record EXCEPT the equipment ids we
+            # just re-scraped (but DO keep ids that failed to load), then append
+            # the freshly scraped records. Preserves other machines' data on a
+            # single-machine scrape.
+            existing = _read_existing()
+            remove = self.scraped_ids - failed_ids
             kept = [r for r in existing
-                    if str(r.get("equipment_id", "")).strip() not in self.scraped_ids]
+                    if str(r.get("equipment_id", "")).strip() not in remove]
             rows = kept + rows
             print(f"Merging {label}: kept {len(kept)} existing records, "
-                  f"updated {len(records)} for {sorted(self.scraped_ids)}")
+                  f"updated {len(records)} for {sorted(remove)}"
+                  + (f", preserved failed {sorted(failed_ids & self.scraped_ids)}"
+                     if failed_ids & self.scraped_ids else ""))
+        elif failed_ids:
+            # Overwrite mode (e.g. per-department parallel run): carry over the
+            # prior records of any machine whose grid failed to load this run so
+            # a transient failure doesn't drop it from the fresh file.
+            have = {str(r.get("equipment_id", "")).strip() for r in rows}
+            carried = [r for r in _read_existing()
+                       if str(r.get("equipment_id", "")).strip() in failed_ids
+                       and str(r.get("equipment_id", "")).strip() not in have]
+            if carried:
+                rows = rows + carried
+                print(f"Preserved {len(carried)} {label} records for machines "
+                      f"that failed to load: {sorted(failed_ids)}")
 
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fields)
@@ -1237,22 +1505,104 @@ class WorkOrderScraper:
             self._persist(self.records, WorkOrderDetail,
                           self._out_name("work_orders_unscheduled", "json"),
                           self._out_name("work_orders_unscheduled", "csv"),
-                          "unscheduled")
+                          "unscheduled", self.failed_unscheduled_ids)
         self._persist(self.scheduled_records, ScheduledWorkOrder,
                       self._out_name("work_orders_scheduled", "json"),
                       self._out_name("work_orders_scheduled", "csv"),
-                      "scheduled")
+                      "scheduled", self.failed_scheduled_ids)
+
+    def save_orphans(self, records: List[WorkOrderDetail]):
+        """Route equipment-less work orders into the per-department unscheduled
+        files (by their dialog Department) + the master, deduping by wo_id.
+
+        These have no equipment_id, so the equipment-keyed merge in _persist
+        does not apply. Every department file is rewritten to drop any stale
+        copy of the scraped wo_ids first (so a WO can't linger in the wrong
+        department or be duplicated), then this run's orphans are appended to
+        their department's file and all of them to the master.
+        """
+        import glob
+
+        def slugify(s: str) -> str:
+            return re.sub(r"[^a-z0-9]+", "_", (s or "").lower()).strip("_")
+
+        fields = list(WorkOrderDetail.__dataclass_fields__)
+        new_ids = {str(r.wo_id).strip() for r in records}
+        new_by_slug: dict = {}
+        for r in records:
+            slug = slugify(r.department) or "general"
+            new_by_slug.setdefault(slug, []).append(asdict(r))
+
+        # Every existing per-department file, plus any new department slug.
+        dept_slugs = set(new_by_slug)
+        for p in glob.glob(os.path.join(OUTPUT_DIR, "work_orders_unscheduled_*.json")):
+            dept_slugs.add(os.path.basename(p)[len("work_orders_unscheduled_"):-len(".json")])
+
+        def _merge(json_path: str, add_rows: list) -> tuple:
+            existing = []
+            if os.path.exists(json_path):
+                try:
+                    with open(json_path, encoding="utf-8") as f:
+                        existing = json.load(f)
+                except (json.JSONDecodeError, OSError):
+                    existing = []
+            kept = [r for r in existing
+                    if str(r.get("wo_id", "")).strip() not in new_ids]
+            rows = kept + add_rows
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(rows, f, indent=2)
+            with open(json_path[:-5] + ".csv", "w", newline="", encoding="utf-8") as f:
+                w = csv.DictWriter(f, fieldnames=fields)
+                w.writeheader()
+                for r in rows:
+                    w.writerow({k: (json.dumps(r.get(k))
+                                    if isinstance(r.get(k), (list, dict))
+                                    else r.get(k, "")) for k in fields})
+            return len(add_rows), len(rows)
+
+        for slug in sorted(dept_slugs):
+            add = new_by_slug.get(slug, [])
+            path = os.path.join(OUTPUT_DIR, f"work_orders_unscheduled_{slug}.json")
+            if not add and not os.path.exists(path):
+                continue
+            n_add, n_total = _merge(path, add)
+            if n_add:
+                print(f"  [orphans] {slug}: +{n_add} (now {n_total})")
+
+        _merge(os.path.join(OUTPUT_DIR, "work_orders_unscheduled.json"),
+               [asdict(r) for r in records])
+        print(f"  [orphans] master updated (+{len(records)})")
 
     # ------------------------------------------------------------------
+    def _quit_owned_driver(self):
+        if self._owns_driver and self.driver:
+            try:
+                self.driver.quit()
+            except Exception:
+                pass
+
     def run(self, limit: Optional[int] = None, department: Optional[str] = None,
             equipment_ids: Optional[List[str]] = None):
         if self.offline:
             # Offline replay never touches the live site and must not re-capture.
             self.capture_html = False
             self.attach_offline()
-            equipment_list = self.get_equipment_list()
         else:
             self.attach()
+
+        # Orphan (equipment-less) unscheduled WOs are division-wide, not tied to
+        # any equipment, so they are scraped in one pass instead of the machine
+        # loop.
+        if self.orphans_only:
+            records = self.scrape_orphan_unscheduled()
+            self.save_orphans(records)
+            print("\nDone (unscheduled-all / orphans).")
+            self._quit_owned_driver()
+            return
+
+        if self.offline:
+            equipment_list = self.get_equipment_list()
+        else:
             if department:
                 equipment_list = self._ids_from_csv(department=department)
                 print(f"Loaded {len(equipment_list)} '{department}' equipment from equipment_data.csv")
@@ -1361,6 +1711,12 @@ def main():
                    help="Write results to work_orders_<kind>_<suffix>.json/.csv "
                         "instead of the master files, so parallel instances "
                         "don't clobber each other. Disables merging.")
+    p.add_argument("--unscheduled-all", dest="orphans_only", action="store_true",
+                   help="Scrape ONLY the division-wide equipment-less "
+                        "(facility / general request) unscheduled work orders "
+                        "from WorkOrderUnshdAll and merge them into the "
+                        "per-department + master unscheduled files. Leaves all "
+                        "equipment-linked data untouched.")
     args = p.parse_args()
 
     print("=" * 64)
@@ -1373,6 +1729,7 @@ def main():
     scraper = WorkOrderScraper()
     scraper.swo_attachments = not args.skip_swo_attachments
     scraper.skip_unscheduled = args.scheduled_only
+    scraper.orphans_only = args.orphans_only
     scraper.offline = args.offline
     scraper.capture_html = not args.no_capture_html
     scraper.debugger = f"127.0.0.1:{args.port}"

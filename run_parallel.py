@@ -168,6 +168,49 @@ def wait_ready(port: int, timeout: int = 45) -> bool:
     return False
 
 
+def run_orphan_step(chrome: str, args) -> None:
+    """Scrape the division-wide equipment-less ("orphan") unscheduled work
+    orders and merge them into the per-department files. MUST run AFTER the
+    department scrapes (which overwrite those files) and BEFORE merge() (which
+    rebuilds the master from them), so orphans survive in both.
+    """
+    slug = "orphans"
+    port = BASE_PORT + len(DEPARTMENTS)      # a port past the department range
+    print("\n" + "=" * 64)
+    print("Scraping equipment-less (orphan) unscheduled work orders ...")
+    print("=" * 64)
+    profile = prepare_profile(slug, args.refresh_profiles)
+    cp = None
+    for attempt in (1, 2):
+        print(f"[orphans] launching Chrome on port {port} (try {attempt}) ...")
+        cp = launch_chrome(chrome, port, profile)
+        if wait_ready(port, timeout=45):
+            break
+        try:
+            cp.terminate()
+        except Exception:
+            pass
+        time.sleep(2)
+    else:
+        print("[orphans] WARNING: Chrome never became ready; skipping orphans.")
+        return
+
+    cmd = [sys.executable, "-u", os.path.join(HERE, "scraper.py"),
+           "--unscheduled-all", "--port", str(port)]
+    logf = open(os.path.join(LOG_DIR, "parallel_orphans.log"), "w", encoding="utf-8")
+    print("[orphans] starting scraper (log: logs/parallel_orphans.log)")
+    proc = subprocess.Popen(cmd, cwd=HERE, stdout=logf, stderr=subprocess.STDOUT)
+    proc.wait()
+    logf.close()
+    print(f"[orphans] scraper finished: "
+          f"{'OK' if proc.returncode == 0 else f'FAILED (exit {proc.returncode})'}")
+    if cp and not args.keep_open:
+        try:
+            cp.terminate()
+        except Exception:
+            pass
+
+
 def merge(skip_unscheduled: bool):
     """Concatenate every per-department file into the master files."""
     print("\n" + "=" * 64)
@@ -231,6 +274,9 @@ def main():
                     help="Pass through: only refresh scheduled work orders")
     ap.add_argument("--merge-only", action="store_true",
                     help="Skip scraping; just merge existing per-department files")
+    ap.add_argument("--skip-orphans", action="store_true",
+                    help="Do NOT scrape the division-wide equipment-less "
+                         "(facility / general) unscheduled work orders.")
     ap.add_argument("--departments", type=str, default=None,
                     help="Comma-separated subset of departments to scrape "
                          "(default: all 9). Useful for re-running ones that "
@@ -362,6 +408,16 @@ def main():
     if bad:
         print(f"  FAILED ({len(bad)}): {', '.join(bad)}  "
               "(check logs/parallel_<dept>.log)")
+
+    # Fold in equipment-less (orphan) unscheduled WOs BEFORE merging so they
+    # land in both the per-department files and the rebuilt master. Only makes
+    # sense for a full, unscheduled-inclusive run.
+    if (not args.skip_orphans and not args.scheduled_only
+            and selected == DEPARTMENTS):
+        run_orphan_step(chrome, args)
+    elif not args.skip_orphans and not args.scheduled_only:
+        print("\n[orphans] skipped (partial department run; run a full scrape "
+              "or 'python scraper.py --unscheduled-all' to refresh orphans).")
 
     merge(args.scheduled_only)
     print("\nDone. Master files updated: work_orders_unscheduled.* / "

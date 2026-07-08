@@ -3843,5 +3843,41 @@
     "completed_datetime": "06/15/2026 12:00 AM",
     "comments": "Primo Uy - 06/15/26  1:59:55 PM: Relaced Chair with our back up.",
     "attachments": []
+  },
+  {
+    "equipment_id": "",
+    "equipment_eq_id": "",
+    "equipment_name": "",
+    "department": "General",
+    "wo_id": "19878",
+    "date_notified": "06/16/2026",
+    "urgency": "6. General Maint",
+    "problem": "One of the hanging light fixture in the Hardware area (close to the TPF office) have 2-3 busted lights.",
+    "status": "Pending",
+    "material_cost": "0",
+    "labor_time": "0",
+    "work_performed_by": "",
+    "downtime_hours": "0",
+    "completed_datetime": "",
+    "comments": "",
+    "attachments": []
+  },
+  {
+    "equipment_id": "",
+    "equipment_eq_id": "",
+    "equipment_name": "",
+    "department": "General",
+    "wo_id": "19886",
+    "date_notified": "06/17/2026",
+    "urgency": "6. General Maint",
+    "problem": "2 Lights off in 2nd floor parking area near the stairs.",
+    "status": "Pending",
+    "material_cost": "0",
+    "labor_time": "0",
+    "work_performed_by": "",
+    "downtime_hours": "0",
+    "completed_datetime": "",
+    "comments": "",
+    "attachments": []
   }
 ]
