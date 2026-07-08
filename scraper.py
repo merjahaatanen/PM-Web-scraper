@@ -43,6 +43,7 @@ import csv
 import json
 import os
 import re
+import shutil
 import sys
 import time
 from dataclasses import dataclass, field, asdict
@@ -89,6 +90,60 @@ SAVE_EVERY   = 25      # checkpoint to disk every N equipment records
 #       unscheduled/<wo_id>.html (Edit Work Order dialog snapshot)
 #       scheduled/<wo_id>.html
 PAGES_DIR = os.path.join(OUTPUT_DIR, "pages")
+
+# --------------------------------------------------------------------------- #
+# Headless login profile
+# --------------------------------------------------------------------------- #
+# A headless Chrome cannot show a login page, so it must start from a Chrome
+# profile that ALREADY holds a valid PM session. `start_chrome_debug.bat` logs
+# into BASE_PROFILE; for a headless run we work off a COPY of it (a profile dir
+# can't be shared by two running Chromes). This mirrors run_parallel.py.
+_LOCALAPPDATA   = os.environ.get("LOCALAPPDATA", os.path.expanduser("~"))
+BASE_PROFILE    = os.path.join(_LOCALAPPDATA, "Google", "Chrome", "PM_Debug_Profile")
+HEADLESS_PROFILE = os.path.join(_LOCALAPPDATA, "Google", "Chrome", "PM_Headless_Profile")
+# Large, regenerable folders we skip when copying so the copy stays small/fast
+# while still preserving the login cookies.
+_PROFILE_IGNORE = shutil.ignore_patterns(
+    "Cache", "Code Cache", "GPUCache", "GraphiteDawnCache", "ShaderCache",
+    "Service Worker", "Crashpad", "component_crx_cache", "extensions_crx_cache",
+    "GrShaderCache", "DawnGraphiteCache", "DawnWebGPUCache", "Default Cache",
+    "*.log", "Singleton*",
+)
+
+
+def ensure_login_profile(dest: str = HEADLESS_PROFILE, refresh: bool = False) -> str:
+    """Copy the logged-in BASE_PROFILE to `dest` so a headless Chrome starts
+    already authenticated. Returns the profile path (or "" if BASE_PROFILE is
+    missing / the copy fails, in which case the caller should fall back)."""
+    if not os.path.isdir(BASE_PROFILE):
+        print(f"  [headless] base login profile not found: {BASE_PROFILE}")
+        print("  [headless] run start_chrome_debug.bat once and log in first.")
+        return ""
+    if os.path.isdir(dest) and refresh:
+        shutil.rmtree(dest, ignore_errors=True)
+    # Reuse an existing good copy - avoids recopying (and the lock problem)
+    # on every run.
+    if os.path.isdir(dest):
+        return dest
+    print(f"  [headless] copying login profile -> {os.path.basename(dest)} ...")
+    try:
+        shutil.copytree(BASE_PROFILE, dest, ignore=_PROFILE_IGNORE,
+                        dirs_exist_ok=True)
+    except Exception as e:
+        # The Cookies DB (the actual login session) is locked while the source
+        # Chrome is running, so the copy would be logged-OUT even if it partly
+        # succeeded. Clean up the partial copy and tell the user how to fix it.
+        msg = str(e)
+        if "WinError 32" in msg or "used by another process" in msg:
+            print("  [headless] CANNOT copy the login profile because a Chrome "
+                  "using it is still open.")
+            print("  [headless] Fix: CLOSE every Chrome window started by "
+                  "start_chrome_debug.bat, then re-run with --refresh-profile.")
+        else:
+            print(f"  [headless] profile copy failed: {msg}")
+        shutil.rmtree(dest, ignore_errors=True)
+        return ""
+    return dest
 
 # The Work Order status checkboxes carry a `value` code that maps to a status.
 # The checkbox `title` attribute is UNRELIABLE (e.g. the value="P" / "Pending"
@@ -660,6 +715,15 @@ class WorkOrderScraper:
         # When True, read everything from previously captured HTML in
         # self.pages_dir instead of the live website.
         self.offline = False
+        # When True (live scrape only), launch our OWN headless Chrome from a
+        # logged-in profile copy instead of attaching to the user's debug
+        # Chrome. Owning the browser avoids the 'invalid session id' crashes
+        # that happen when a shared/attached Chrome tab is closed or navigated.
+        self.headless = False
+        # Optional explicit profile dir for the headless browser. When None a
+        # copy of BASE_PROFILE (HEADLESS_PROFILE) is used.
+        self.profile: Optional[str] = None
+        self.refresh_profile = False
         # We launched our own (headless) browser and therefore own it; safe to
         # quit on finish. False when attached to the user's debug Chrome.
         self._owns_driver = False
@@ -719,6 +783,48 @@ class WorkOrderScraper:
         self.driver = webdriver.Chrome(service=svc, options=opts)
         self._owns_driver = True
         print(f"Replaying captured pages from: {self.pages_dir}")
+
+    def launch_headless(self):
+        """Launch a scraper-OWNED headless Chrome against the LIVE site, started
+        from a logged-in profile copy so it is already authenticated.
+
+        Owning the browser (vs attaching to the shared debug Chrome) removes the
+        'invalid session id' failures caused by a tab being closed/navigated out
+        from under the driver, and uses far less RAM/GPU than a headful window.
+        Falls back to attach() if no logged-in profile is available.
+        """
+        profile = self.profile or ensure_login_profile(refresh=self.refresh_profile)
+        if not profile:
+            print("  [headless] no logged-in profile available; "
+                  "falling back to attaching to the debug Chrome.")
+            self.attach()
+            return
+        print(f"Launching headless Chrome (profile: {os.path.basename(profile)}) ...")
+        opts = Options()
+        opts.add_argument("--headless=new")
+        opts.add_argument("--disable-gpu")
+        opts.add_argument("--no-sandbox")
+        opts.add_argument("--disable-dev-shm-usage")
+        opts.add_argument("--window-size=1920,1080")
+        opts.add_argument(f"--user-data-dir={profile}")
+        svc = Service(ChromeDriverManager().install())
+        self.driver = webdriver.Chrome(service=svc, options=opts)
+        self._owns_driver = True
+        # Verify we actually landed on the app and not a login redirect.
+        self.driver.get(EQUIP_ALL)
+        try:
+            WebDriverWait(self.driver, 20).until(
+                lambda d: "EquipmentAll" in d.current_url or "Login" in d.current_url
+                          or "login" in d.current_url.lower()
+            )
+        except TimeoutException:
+            pass
+        url = self.driver.current_url
+        print(f"Headless Chrome ready. Current URL: {url}")
+        if "login" in url.lower():
+            print("  [headless] WARNING: redirected to a login page - the copied "
+                  "profile's session has expired. Re-run start_chrome_debug.bat, "
+                  "log in, then retry with --refresh-profile.")
 
     # ------------------------------------------------------------------
     def get_equipment_list(self) -> List[dict]:
@@ -810,25 +916,40 @@ class WorkOrderScraper:
         return ids
 
     # ------------------------------------------------------------------
+    # JS that returns the Kendo grid's authoritative record count, or -1 if the
+    # widget isn't ready / jQuery-Kendo isn't available yet.
+    _GRID_TOTAL_JS = (
+        "try { var g = $(arguments[0]).data('kendoGrid');"
+        " return (g && g.dataSource) ? g.dataSource.total() : -1; }"
+        " catch (e) { return -1; }"
+    )
+
+    def _grid_total(self, grid_sel: str) -> int:
+        """Authoritative row count straight from the Kendo grid widget."""
+        try:
+            t = self.driver.execute_script(self._GRID_TOTAL_JS, grid_sel)
+            return int(t) if t is not None else -1
+        except Exception:
+            return -1
+
     def _load_grid_rows(self, grid_sel: str, timeout: int = 20):
         """Wait for a Kendo grid to finish loading and return (rows, confirmed_empty).
 
-        The old logic returned [] as soon as it saw either no rows after 8s OR a
-        `.k-grid-norecords` element. Under heavy parallel load the grid's AJAX
-        often had not finished within 8s, and Kendo briefly renders a
-        "no records" placeholder while (re)binding - so a machine that actually
-        had work orders was silently recorded with zero. That data was then lost
-        because the per-department output file is overwritten, not merged.
+        These PM dashboards NEVER render a `.k-grid-norecords` placeholder for an
+        empty grid - an empty grid just shows the header with no content rows,
+        which is indistinguishable from a still-loading grid by DOM alone. That
+        made every genuinely-empty machine burn the full timeout and get falsely
+        flagged 'never loaded' (and every real retry wasted ~40s).
 
-        This version:
-          * waits until the grid is NOT actively loading (no .k-loading-mask),
-          * treats the empty/"no records" state as real ONLY when it persists
-            across several settled checks (so a transient placeholder during
-            binding is ignored),
-          * uses a longer default timeout, and
-          * reports `confirmed_empty=False` when it timed out WITHOUT ever
-            reaching a definitive state, so the caller can retry instead of
-            recording a false zero.
+        The reliable signal is the Kendo widget's own `dataSource.total()`:
+          * total > 0  -> wait for that many DOM rows to paint, then return them,
+          * total == 0 -> confirmed empty (needs 2 stable reads to avoid a
+                          pre-bind transient), so we stop immediately,
+          * total == -1 (widget not ready / JS unavailable) -> fall back to the
+                          old DOM row / `.k-grid-norecords` heuristic.
+        Never trusts the grid while Kendo is actively (re)binding (loading mask).
+        A timeout with no definitive state returns confirmed_empty=False so the
+        caller can retry instead of recording a false zero.
         """
         row_sel   = f"{grid_sel} .k-grid-content tbody tr.k-master-row"
         norec_sel = f"{grid_sel} .k-grid-norecords"
@@ -841,16 +962,32 @@ class WorkOrderScraper:
                 empty_confirmations = 0
                 time.sleep(0.3)
                 continue
+
+            total = self._grid_total(grid_sel)
             rows = self.driver.find_elements(By.CSS_SELECTOR, row_sel)
-            if rows:
-                return rows, False
-            if self.driver.find_elements(By.CSS_SELECTOR, norec_sel):
+
+            if total > 0:
+                # The widget knows there are records; return once the DOM rows
+                # have painted (otherwise keep waiting for them).
+                if rows:
+                    return rows, False
+                empty_confirmations = 0
+            elif total == 0:
+                # Authoritative empty. Require 2 stable reads so a pre-bind 0
+                # (before the AJAX fetch runs) can't be mistaken for empty.
                 empty_confirmations += 1
-                # Require the empty state to hold before believing it.
-                if empty_confirmations >= 3:
+                if empty_confirmations >= 2:
                     return [], True
             else:
-                empty_confirmations = 0
+                # Widget not ready yet: fall back to the DOM heuristic.
+                if rows:
+                    return rows, False
+                if self.driver.find_elements(By.CSS_SELECTOR, norec_sel):
+                    empty_confirmations += 1
+                    if empty_confirmations >= 3:
+                        return [], True
+                else:
+                    empty_confirmations = 0
             time.sleep(0.3)
         # Timed out without a settled state. Return whatever is there, but flag
         # it as NOT a confirmed empty so the caller can retry the dashboard.
@@ -1587,6 +1724,8 @@ class WorkOrderScraper:
             # Offline replay never touches the live site and must not re-capture.
             self.capture_html = False
             self.attach_offline()
+        elif self.headless:
+            self.launch_headless()
         else:
             self.attach()
 
@@ -1711,6 +1850,17 @@ def main():
                    help="Write results to work_orders_<kind>_<suffix>.json/.csv "
                         "instead of the master files, so parallel instances "
                         "don't clobber each other. Disables merging.")
+    p.add_argument("--headless", action="store_true",
+                   help="LIVE scrape in a scraper-owned headless Chrome started "
+                        "from a logged-in profile copy (no start_chrome_debug.bat "
+                        "window needed). More stable than attaching - avoids the "
+                        "'invalid session id' crashes from a shared Chrome.")
+    p.add_argument("--profile", type=str, default=None,
+                   help="Explicit Chrome profile dir for --headless (default: a "
+                        "copy of the logged-in PM_Debug_Profile).")
+    p.add_argument("--refresh-profile", action="store_true",
+                   help="Re-copy the login profile for --headless (do this after "
+                        "logging in again / when the session has expired).")
     p.add_argument("--unscheduled-all", dest="orphans_only", action="store_true",
                    help="Scrape ONLY the division-wide equipment-less "
                         "(facility / general request) unscheduled work orders "
@@ -1719,11 +1869,15 @@ def main():
                         "equipment-linked data untouched.")
     args = p.parse_args()
 
+    mode = "  [OFFLINE REPLAY]" if args.offline else ("  [HEADLESS]" if args.headless else "")
     print("=" * 64)
-    print("PM Work Order Scraper" + ("  [OFFLINE REPLAY]" if args.offline else ""))
+    print("PM Work Order Scraper" + mode)
     print("=" * 64)
-    if not args.offline:
+    if not args.offline and not args.headless:
         print("Chrome must be running via start_chrome_debug.bat")
+    elif args.headless:
+        print("Headless mode: using a logged-in profile copy "
+              "(log in once via start_chrome_debug.bat first).")
     print("=" * 64 + "\n")
 
     scraper = WorkOrderScraper()
@@ -1731,6 +1885,9 @@ def main():
     scraper.skip_unscheduled = args.scheduled_only
     scraper.orphans_only = args.orphans_only
     scraper.offline = args.offline
+    scraper.headless = args.headless
+    scraper.profile = os.path.abspath(args.profile) if args.profile else None
+    scraper.refresh_profile = args.refresh_profile
     scraper.capture_html = not args.no_capture_html
     scraper.debugger = f"127.0.0.1:{args.port}"
     if args.out_suffix:

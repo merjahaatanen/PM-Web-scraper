@@ -128,16 +128,23 @@ def chrome_ready(port: int) -> bool:
         return False
 
 
-def launch_chrome(chrome: str, port: int, profile: str) -> subprocess.Popen:
+def launch_chrome(chrome: str, port: int, profile: str,
+                  headless: bool = True) -> subprocess.Popen:
     # Launch on about:blank (lightweight); the scraper navigates itself. Each
     # instance gets its own throwaway profile dir, so they never collide.
+    # Headless (default) uses far less RAM/GPU than a window, which is what let
+    # 9 simultaneous Chromes crash chromedriver in headful mode.
+    args = [chrome, f"--remote-debugging-port={port}",
+            f"--user-data-dir={profile}", "--no-first-run",
+            "--no-default-browser-check", "--disable-session-crashed-bubble",
+            "--disable-infobars", "--restore-last-session=false",
+            "--no-startup-window=false"]
+    if headless:
+        args += ["--headless=new", "--disable-gpu", "--disable-dev-shm-usage",
+                 "--window-size=1920,1080"]
+    args.append("about:blank")
     return subprocess.Popen(
-        [chrome, f"--remote-debugging-port={port}",
-         f"--user-data-dir={profile}", "--no-first-run",
-         "--no-default-browser-check", "--disable-session-crashed-bubble",
-         "--disable-infobars", "--restore-last-session=false",
-         "--no-startup-window=false", "about:blank"],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
     )
 
 
@@ -183,7 +190,7 @@ def run_orphan_step(chrome: str, args) -> None:
     cp = None
     for attempt in (1, 2):
         print(f"[orphans] launching Chrome on port {port} (try {attempt}) ...")
-        cp = launch_chrome(chrome, port, profile)
+        cp = launch_chrome(chrome, port, profile, headless=not args.headful)
         if wait_ready(port, timeout=45):
             break
         try:
@@ -277,6 +284,11 @@ def main():
     ap.add_argument("--skip-orphans", action="store_true",
                     help="Do NOT scrape the division-wide equipment-less "
                          "(facility / general) unscheduled work orders.")
+    ap.add_argument("--headful", action="store_true",
+                    help="Launch VISIBLE Chrome windows instead of headless. "
+                         "Headless is the default (uses far less RAM/GPU and is "
+                         "much more stable when running many at once). Requires "
+                         "the login profile to already be authenticated.")
     ap.add_argument("--departments", type=str, default=None,
                     help="Comma-separated subset of departments to scrape "
                          "(default: all 9). Useful for re-running ones that "
@@ -308,6 +320,7 @@ def main():
     print("=" * 64)
     print(f"Departments : {len(selected)}  ({', '.join(selected)})")
     print(f"Max parallel: {args.jobs}")
+    print(f"Browser     : {'HEADFUL (visible windows)' if args.headful else 'headless'}")
     print(f"Profiles    : {PARALLEL_PROFILES}")
     print(f"Logs        : {LOG_DIR}")
     print("\nMake sure ALL Chrome windows are closed before continuing.")
@@ -342,7 +355,8 @@ def main():
         # (this was the cause of the earlier 'target window already closed').
         for attempt in (1, 2):
             print(f"[{slug}] launching Chrome on port {port} (try {attempt}) ...")
-            chrome_procs[slug] = launch_chrome(chrome, port, profile)
+            chrome_procs[slug] = launch_chrome(chrome, port, profile,
+                                               headless=not args.headful)
             if wait_ready(port, timeout=45):
                 break
             print(f"[{slug}] Chrome on port {port} had no page target; "
