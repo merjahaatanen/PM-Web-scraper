@@ -93,6 +93,72 @@ def slugify(name: str) -> str:
     return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
 
 
+def _rec_count(path: str) -> int:
+    """Number of records in a work-order JSON file (0 if missing/unreadable)."""
+    import json as _json
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = _json.load(f)
+        return len(data) if isinstance(data, list) else 0
+    except (OSError, ValueError):
+        return 0
+
+
+def _dept_paths(slug: str) -> list:
+    return [os.path.join(HERE, f"work_orders_{kind}_{slug}.{ext}")
+            for kind in ("unscheduled", "scheduled") for ext in ("json", "csv")]
+
+
+def backup_dept_files(selected: list) -> dict:
+    """Copy each selected department's per-dept files to .prescrape.bak and
+    return {json_path: pre_scrape_record_count} for the shrink guard."""
+    counts = {}
+    for dept in selected:
+        slug = slugify(dept)
+        for p in _dept_paths(slug):
+            if os.path.exists(p):
+                shutil.copy2(p, p + ".prescrape.bak")
+            if p.endswith(".json"):
+                counts[p] = _rec_count(p)
+    return counts
+
+
+def guard_dept_files(selected: list, pre_counts: dict, progress=print) -> list:
+    """Roll back any department whose fresh scrape shrank a substantial file by
+    more than half - the signature of a throttled/expired session serving empty
+    grids. Returns the list of rolled-back department slugs. Also removes the
+    .prescrape.bak files it doesn't need."""
+    rolled_back = []
+    for dept in selected:
+        slug = slugify(dept)
+        for jp in (os.path.join(HERE, f"work_orders_unscheduled_{slug}.json"),
+                   os.path.join(HERE, f"work_orders_scheduled_{slug}.json")):
+            old = pre_counts.get(jp, 0)
+            new = _rec_count(jp)
+            if old >= 20 and new < 0.5 * old:
+                # Restore json + csv from backup.
+                base = jp[:-5]
+                for ext in ("json", "csv"):
+                    bak = f"{base}.{ext}.prescrape.bak"
+                    if os.path.exists(bak):
+                        shutil.copy2(bak, f"{base}.{ext}")
+                progress(f"  GUARD: '{dept}' {os.path.basename(jp)} shrank "
+                         f"{old} -> {new}; RESTORED previous data (likely a "
+                         "session/throttling issue - scrape sequentially).")
+                if slug not in rolled_back:
+                    rolled_back.append(slug)
+    # Clean up all backups for the selected departments.
+    for dept in selected:
+        for p in _dept_paths(slugify(dept)):
+            bak = p + ".prescrape.bak"
+            if os.path.exists(bak):
+                try:
+                    os.remove(bak)
+                except OSError:
+                    pass
+    return rolled_back
+
+
 def find_chrome() -> str:
     for path in CHROME_CANDIDATES:
         if os.path.exists(path):
@@ -187,25 +253,33 @@ def run_orphan_step(chrome: str, args) -> None:
     print("Scraping equipment-less (orphan) unscheduled work orders ...")
     print("=" * 64)
     profile = prepare_profile(slug, args.refresh_profiles)
-    cp = None
-    for attempt in (1, 2):
-        print(f"[orphans] launching Chrome on port {port} (try {attempt}) ...")
-        cp = launch_chrome(chrome, port, profile, headless=not args.headful)
-        if wait_ready(port, timeout=45):
-            break
-        try:
-            cp.terminate()
-        except Exception:
-            pass
-        time.sleep(2)
-    else:
-        print("[orphans] WARNING: Chrome never became ready; skipping orphans.")
-        return
-
     cmd = [sys.executable, "-u", os.path.join(HERE, "scraper.py"),
-           "--unscheduled-all", "--port", str(port)]
+           "--unscheduled-all"]
+    cp = None
+    if args.headful:
+        for attempt in (1, 2):
+            print(f"[orphans] launching Chrome on port {port} (try {attempt}) ...")
+            cp = launch_chrome(chrome, port, profile, headless=False)
+            if wait_ready(port, timeout=45):
+                break
+            try:
+                cp.terminate()
+            except Exception:
+                pass
+            time.sleep(2)
+        else:
+            print("[orphans] WARNING: Chrome never became ready; skipping orphans.")
+            return
+        cmd += ["--port", str(port)]
+    else:
+        # Headless owned-browser (default), same reliable model as the
+        # per-department jobs.
+        cmd += ["--headless", "--profile", profile]
+
     logf = open(os.path.join(LOG_DIR, "parallel_orphans.log"), "w", encoding="utf-8")
-    print("[orphans] starting scraper (log: logs/parallel_orphans.log)")
+    print(f"[orphans] starting scraper "
+          f"({'headful/attach' if args.headful else 'headless/owned'}; "
+          f"log: logs/parallel_orphans.log)")
     proc = subprocess.Popen(cmd, cwd=HERE, stdout=logf, stderr=subprocess.STDOUT)
     proc.wait()
     logf.close()
@@ -268,8 +342,11 @@ def merge(skip_unscheduled: bool):
 
 def main():
     ap = argparse.ArgumentParser(description="Parallel per-department WO scrape")
-    ap.add_argument("--jobs", type=int, default=len(DEPARTMENTS),
-                    help=f"Max concurrent departments (default: {len(DEPARTMENTS)})")
+    ap.add_argument("--jobs", type=int, default=1,
+                    help="Max concurrent departments (default: 1 = sequential). "
+                         "The PM site throttles concurrent sessions and starts "
+                         "serving EMPTY grids, which silently wipes data - so "
+                         "sequential is the safe default. Raise at your own risk.")
     ap.add_argument("--refresh-profiles", action="store_true",
                     help="Re-copy the login profile for each department")
     ap.add_argument("--keep-open", action="store_true",
@@ -315,6 +392,10 @@ def main():
     chrome = find_chrome()
     os.makedirs(PARALLEL_PROFILES, exist_ok=True)
 
+    # Snapshot current per-department files so a throttled/empty scrape can be
+    # rolled back instead of destroying good data.
+    pre_counts = backup_dept_files(selected)
+
     print("=" * 64)
     print("PARALLEL PM WORK ORDER SCRAPE")
     print("=" * 64)
@@ -350,30 +431,39 @@ def main():
     def launch_job(job):
         dept, port, slug = job
         profile = prepare_profile(slug, args.refresh_profiles)
-        # Launch Chrome and verify it actually exposes a usable page target
-        # before starting the scraper. Retry once if the first launch is dead
-        # (this was the cause of the earlier 'target window already closed').
-        for attempt in (1, 2):
-            print(f"[{slug}] launching Chrome on port {port} (try {attempt}) ...")
-            chrome_procs[slug] = launch_chrome(chrome, port, profile,
-                                               headless=not args.headful)
-            if wait_ready(port, timeout=45):
-                break
-            print(f"[{slug}] Chrome on port {port} had no page target; "
-                  "relaunching ...")
-            cp = chrome_procs.pop(slug, None)
-            if cp:
-                try:
-                    cp.terminate()
-                except Exception:
-                    pass
-            time.sleep(2)
-        else:
-            print(f"[{slug}] WARNING: Chrome never became ready; "
-                  "scraper will likely fail.")
         cmd = [sys.executable, "-u", os.path.join(HERE, "scraper.py"),
-               "--department", dept, "--port", str(port),
-               "--out-suffix", slug]
+               "--department", dept, "--out-suffix", slug]
+
+        if args.headful:
+            # Legacy path: WE launch a visible Chrome and the scraper attaches to
+            # it over a remote-debugging port. Verify a usable page target first.
+            for attempt in (1, 2):
+                print(f"[{slug}] launching Chrome on port {port} (try {attempt}) ...")
+                chrome_procs[slug] = launch_chrome(chrome, port, profile,
+                                                   headless=False)
+                if wait_ready(port, timeout=45):
+                    break
+                print(f"[{slug}] Chrome on port {port} had no page target; "
+                      "relaunching ...")
+                cp = chrome_procs.pop(slug, None)
+                if cp:
+                    try:
+                        cp.terminate()
+                    except Exception:
+                        pass
+                time.sleep(2)
+            else:
+                print(f"[{slug}] WARNING: Chrome never became ready; "
+                      "scraper will likely fail.")
+            cmd += ["--port", str(port)]
+        else:
+            # Headless (default): the scraper OWNS its own headless Chrome,
+            # started from this department's logged-in profile copy. No
+            # remote-debugging port / attach - that combination proved flaky
+            # (Chrome exposed no page target, chromedriver crashed). Owning the
+            # browser is what made the single-department headless runs reliable.
+            cmd += ["--headless", "--profile", profile]
+
         if args.skip_swo_attachments:
             cmd.append("--skip-swo-attachments")
         if args.scheduled_only:
@@ -381,7 +471,8 @@ def main():
         logf = open(os.path.join(LOG_DIR, f"parallel_{slug}.log"),
                     "w", encoding="utf-8")
         print(f"[{slug}] starting scraper for '{dept}' "
-              f"(log: logs/parallel_{slug}.log)")
+              f"({'headful/attach' if args.headful else 'headless/owned'}; "
+              f"log: logs/parallel_{slug}.log)")
         proc = subprocess.Popen(cmd, cwd=HERE, stdout=logf,
                                 stderr=subprocess.STDOUT)
         scraper_procs[slug] = (proc, logf, dept)
@@ -416,6 +507,14 @@ def main():
                 launch_job(pending.pop(0))
 
     print("\nAll department scrapers finished.")
+
+    # Roll back any department whose data shrank by more than half - the
+    # signature of a throttled/expired session serving empty grids.
+    rolled_back = guard_dept_files(selected, pre_counts)
+    if rolled_back:
+        print(f"  GUARD: restored previous data for {len(rolled_back)} "
+              f"department(s): {', '.join(rolled_back)}")
+
     ok = [d for _, d, rc in done if rc == 0]
     bad = [d for _, d, rc in done if rc != 0]
     print(f"  Succeeded ({len(ok)}): {', '.join(ok) if ok else '-'}")

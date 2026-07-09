@@ -1,11 +1,11 @@
 ================================================================
-PM Work Order Scraper
+PM Work Order Scraper  [HEADLESS]
 ================================================================
-Chrome must be running via start_chrome_debug.bat
+Headless mode: using a logged-in profile copy (log in once via start_chrome_debug.bat first).
 ================================================================
 
-Attaching to Chrome at 127.0.0.1:9223 ...
-Attached. Current URL: https://circaweb.bobrick.com/PME/Forms/EquipmentAll
+Launching headless Chrome (profile: quality_assurance) ...
+Headless Chrome ready. Current URL: https://circaweb.bobrick.com/PME/Forms/EquipmentAll
 Loaded 111 'Quality Assurance' equipment from equipment_data.csv
 
 Scraping 111 equipment records...

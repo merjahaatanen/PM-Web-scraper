@@ -1,11 +1,11 @@
 ================================================================
-PM Work Order Scraper
+PM Work Order Scraper  [HEADLESS]
 ================================================================
-Chrome must be running via start_chrome_debug.bat
+Headless mode: using a logged-in profile copy (log in once via start_chrome_debug.bat first).
 ================================================================
 
-Attaching to Chrome at 127.0.0.1:9229 ...
-Attached. Current URL: https://circaweb.bobrick.com/PME/Forms/EquipmentAll
+Launching headless Chrome (profile: general) ...
+Headless Chrome ready. Current URL: https://circaweb.bobrick.com/PME/Forms/EquipmentAll
 Loaded 4 'General' equipment from equipment_data.csv
 
 Scraping 4 equipment records...
@@ -17,12 +17,112 @@ Scraping 4 equipment records...
   [EQ ID 1978] 0 unscheduled work orders
   [EQ ID 1978] 0 scheduled work orders
 [3/4] EQ ID 744
-  [EQ ID 744] 'General Maintenace Requests': 212 work orders scraped
-  [EQ ID 744] 0 scheduled work orders
+  [EQ ID 744] WO 3899 error: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=149.0.7827.197); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7f0493fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff7f0494000+14980]
+	chromedriver!(No symbol) [0x7ff7effd793d]
+	chromedriver!(No symbol) [0x7ff7effc2d82]
+	chromedriver!(No symbol) [0x7ff7effe90cc]
+	chromedriver!(No symbol) [0x7ff7f0061aa0]
+	chromedriver!(No symbol) [0x7ff7f007ec82]
+	chromedriver!(No symbol) [0x7ff7f002401c]
+	chromedriver!(No symbol) [0x7ff7f0024f43]
+	chromedriver!GetHandleVerifier [0x7ff7f0a77591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff7f0a71902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff7f0a97115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff7f04b1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff7f04ba82c+3b1ac]
+	chromedriver!GetHandleVerifier [0x7ff7f049d744+1e0c4]
+	chromedriver!GetHandleVerifier [0x7ff7f049d8d4+1e254]
+	chromedriver!GetHandleVerifier [0x7ff7f0481447+1dc7]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (unscheduled): Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7f0493fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff7f0494000+14980]
+	chromedriver!(No symbol) [0x7ff7effd7726]
+	chromedriver!(No symbol) [0x7ff7f0023083]
+	chromedriver!(No symbol) [0x7ff7f005a2d2]
+	chromedriver!(No symbol) [0x7ff7f00540d2]
+	chromedriver!(No symbol) [0x7ff7f0053892]
+	chromedriver!(No symbol) [0x7ff7effa03e5]
+	chromedriver!GetHandleVerifier [0x7ff7f0a77591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff7f0a71902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff7f0a97115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff7f04b1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff7f04ba82c+3b1ac]
+	chromedriver!(No symbol) [0x7ff7eff9f188]
+	chromedriver!GetHandleVerifier [0x7ff7f0c47b58+7c84d8]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7f0493fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff7f0494000+14980]
+	chromedriver!(No symbol) [0x7ff7effd7726]
+	chromedriver!(No symbol) [0x7ff7f0023083]
+	chromedriver!(No symbol) [0x7ff7f005a2d2]
+	chromedriver!(No symbol) [0x7ff7f00540d2]
+	chromedriver!(No symbol) [0x7ff7f0053892]
+	chromedriver!(No symbol) [0x7ff7effa03e5]
+	chromedriver!GetHandleVerifier [0x7ff7f0a77591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff7f0a71902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff7f0a97115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff7f04b1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff7f04ba82c+3b1ac]
+	chromedriver!(No symbol) [0x7ff7eff9f188]
+	chromedriver!GetHandleVerifier [0x7ff7f0c47b58+7c84d8]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
 [4/4] EQ ID 1354
-  [EQ ID 1354] 0 unscheduled work orders
-  [EQ ID 1354] 'Pilfergard Door alarms': 8 scheduled work orders scraped
-Saved 212 unscheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_unscheduled_general.csv
-Saved 8 scheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_scheduled_general.csv
+  Error (unscheduled): Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7f0493fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff7f0494000+14980]
+	chromedriver!(No symbol) [0x7ff7effd7726]
+	chromedriver!(No symbol) [0x7ff7f0023083]
+	chromedriver!(No symbol) [0x7ff7f005a2d2]
+	chromedriver!(No symbol) [0x7ff7f00540d2]
+	chromedriver!(No symbol) [0x7ff7f0053892]
+	chromedriver!(No symbol) [0x7ff7effa03e5]
+	chromedriver!GetHandleVerifier [0x7ff7f0a77591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff7f0a71902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff7f0a97115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff7f04b1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff7f04ba82c+3b1ac]
+	chromedriver!(No symbol) [0x7ff7eff9f188]
+	chromedriver!GetHandleVerifier [0x7ff7f0c47b58+7c84d8]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+  Error (scheduled): Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff7f0493fa5+14925]
+	chromedriver!GetHandleVerifier [0x7ff7f0494000+14980]
+	chromedriver!(No symbol) [0x7ff7effd7726]
+	chromedriver!(No symbol) [0x7ff7f0023083]
+	chromedriver!(No symbol) [0x7ff7f005a2d2]
+	chromedriver!(No symbol) [0x7ff7f00540d2]
+	chromedriver!(No symbol) [0x7ff7f0053892]
+	chromedriver!(No symbol) [0x7ff7effa03e5]
+	chromedriver!GetHandleVerifier [0x7ff7f0a77591+5f7f11]
+	chromedriver!GetHandleVerifier [0x7ff7f0a71902+5f2282]
+	chromedriver!GetHandleVerifier [0x7ff7f0a97115+617a95]
+	chromedriver!GetHandleVerifier [0x7ff7f04b1dce+3274e]
+	chromedriver!GetHandleVerifier [0x7ff7f04ba82c+3b1ac]
+	chromedriver!(No symbol) [0x7ff7eff9f188]
+	chromedriver!GetHandleVerifier [0x7ff7f0c47b58+7c84d8]
+	KERNEL32!(No symbol) [0x7ffaab8ee957]
+	ntdll!RtlUserThreadStart [0x7ffaabf47c1c+2c]
+
+Saved 0 unscheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_unscheduled_general.csv
+Saved 0 scheduled records  ->  C:\Users\merja.haatanen\OneDrive - Bobrick Washroom Equipment\Desktop\PM Web Scraper\work_orders_scheduled_general.csv
 
 Done.
