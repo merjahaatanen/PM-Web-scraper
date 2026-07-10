@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BLA Maintenance Dashboard</title>
+  <title>MINT - Maintenance Intelligence & Troubleshooting</title>
   <script src="/vendor/react.js"></script>
   <script src="/vendor/react-dom.js"></script>
   <script src="/vendor/htm.js"></script>
@@ -144,10 +144,16 @@
       return html`
         <header className="bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow-lg">
           <div className="max-w-6xl mx-auto px-6 py-5 flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-black">B</div>
+            <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
+              <svg viewBox="0 0 24 24" className="w-7 h-7" fill="none" stroke="currentColor"
+                   strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.1-.5-.5-2.1 2.6-2.6z"/>
+                <circle cx="18" cy="6" r="1.2" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
             <div>
-              <div className="text-xl font-extrabold tracking-tight">BLA Maintenance Dashboard</div>
-              <div className="text-blue-100 text-sm">Division overview · departments · machine troubleshooting</div>
+              <div className="text-xl font-extrabold tracking-tight">MINT</div>
+              <div className="text-blue-100 text-sm">Maintenance Intelligence & Troubleshooting</div>
             </div>
           </div>
         </header>`;
@@ -185,7 +191,6 @@
 
       return html`
         <div className="fade-in">
-          <${Breadcrumb} items=${[{ label: "BLA Division" }]} />
           <h1 className="text-2xl font-extrabold text-slate-800 mb-1">BLA Division</h1>
           <p className="text-slate-500 mb-5">Combined quick view across all departments.</p>
           <${KpiRow} stats=${data.totals} />
@@ -513,6 +518,179 @@
     }
 
     /* ------------------------------------------------------------------ */
+    /* Checklist edit auth + markdown-table helpers                       */
+    /* ------------------------------------------------------------------ */
+    // The shared edit password is kept only in sessionStorage (cleared when the
+    // browser tab closes) and sent as a header on every mutating request.
+    function getEditPw() { try { return sessionStorage.getItem("blaEditPw") || ""; } catch (e) { return ""; } }
+    function setEditPw(v) { try { v ? sessionStorage.setItem("blaEditPw", v) : sessionStorage.removeItem("blaEditPw"); } catch (e) {} }
+    function editHeaders(extra) {
+      const h = Object.assign({}, extra || {});
+      const pw = getEditPw();
+      if (pw) h["X-Edit-Password"] = pw;
+      return h;
+    }
+
+    // Convert between a table cell's stored markdown (<br>-joined) and the
+    // newline-per-item text shown in the friendly editor.
+    function cellToText(s) { return String(s == null ? "" : s).replace(/<br\s*\/?>/gi, "\n"); }
+    function cellToMd(s) {
+      return String(s == null ? "" : s).split(/\r?\n/).map((x) => x.trim()).filter((x) => x.length).join("<br>");
+    }
+    function splitGuideRow(line) {
+      let s = line.trim();
+      if (s.startsWith("|")) s = s.slice(1);
+      if (s.endsWith("|")) s = s.slice(0, -1);
+      return s.split("|").map((c) => c.trim());
+    }
+    // Split guide markdown into ordered blocks of {type:"text"} and
+    // {type:"table", headers, rows} so we can render a form-based editor and
+    // faithfully rebuild the markdown afterwards.
+    function parseGuideBlocks(md) {
+      const lines = (md || "").split(/\r?\n/);
+      const blocks = []; let buf = []; let i = 0;
+      const flush = () => {
+        const text = buf.join("\n").replace(/\s+$/, "");
+        if (text.trim().length) blocks.push({ type: "text", text });
+        buf = [];
+      };
+      while (i < lines.length) {
+        const isRow = /^\s*\|.*\|\s*$/.test(lines[i]);
+        const nextSep = i + 1 < lines.length && /^\s*\|?[\s:|-]*-{2,}[\s:|-]*$/.test(lines[i + 1]);
+        if (isRow && nextSep) {
+          flush();
+          const headers = splitGuideRow(lines[i]);
+          i += 2;
+          const rows = [];
+          while (i < lines.length && /^\s*\|.*\|\s*$/.test(lines[i])) { rows.push(splitGuideRow(lines[i])); i++; }
+          blocks.push({ type: "table", headers, rows });
+          continue;
+        }
+        buf.push(lines[i]); i++;
+      }
+      flush();
+      return blocks.length ? blocks : [{ type: "text", text: md || "" }];
+    }
+    function blocksToGuideMarkdown(blocks) {
+      const parts = blocks.map((b) => {
+        if (b.type === "text") return (b.text || "").replace(/\s+$/, "");
+        const cols = b.headers.length;
+        const head = "| " + b.headers.map((h) => (h || "").trim()).join(" | ") + " |";
+        const sep = "| " + b.headers.map(() => ":---").join(" | ") + " |";
+        const rows = b.rows.map((r) => {
+          const cells = [];
+          for (let c = 0; c < cols; c++) cells.push(cellToMd(r[c] || ""));
+          return "| " + cells.join(" | ") + " |";
+        });
+        return [head, sep, ...rows].join("\n");
+      });
+      return parts.filter((p) => p !== "").join("\n\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+    }
+
+    // Modal that verifies the shared edit password against the server.
+    function PasswordGate({ onUnlock, onCancel }) {
+      const [pw, setPw] = useState("");
+      const [busy, setBusy] = useState(false);
+      const [err, setErr] = useState(null);
+      const submit = async () => {
+        if (!pw) return;
+        setBusy(true); setErr(null);
+        try {
+          const r = await fetch(API + "/api/verify-edit-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pw }),
+          });
+          const d = await r.json();
+          if (!r.ok || !d.ok) throw new Error(d.error || "Incorrect password");
+          setEditPw(pw);
+          onUnlock();
+        } catch (e) { setErr(e.message); }
+        finally { setBusy(false); }
+      };
+      return html`
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4"
+          onClick=${onCancel}>
+          <div className="bg-white rounded-2xl shadow-xl border border-blue-100 w-full max-w-sm p-6"
+            onClick=${(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xl">🔒</span>
+              <h3 className="text-lg font-extrabold text-slate-800">Unlock editing</h3>
+            </div>
+            <p className="text-sm text-slate-500 mb-4">Enter the shared edit password to make changes to checklists.</p>
+            <input type="password" value=${pw} autoFocus
+              onInput=${(e) => setPw(e.target.value)}
+              onKeyDown=${(e) => { if (e.key === "Enter") submit(); }}
+              placeholder="Password"
+              className="w-full px-4 py-2 rounded-xl border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 mb-3" />
+            ${err && html`<div className="bg-rose-50 text-rose-700 rounded-lg px-3 py-2 text-sm mb-3">${err}</div>`}
+            <div className="flex justify-end gap-2">
+              <button onClick=${onCancel} className="px-4 py-2 rounded-full text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
+              <button onClick=${submit} disabled=${busy || !pw}
+                className="px-4 py-2 rounded-full text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50">
+                ${busy ? "Checking…" : "Unlock"}
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // Friendly, form-based editor for the checklist. Each table row becomes a
+    // labeled card with one field per column; each field is a plain textarea
+    // where every line is a bullet (stored as <br> in the markdown).
+    function GuideFormEditor({ blocks, onChange }) {
+      const clone = () => blocks.map((b) => b.type === "table"
+        ? { type: "table", headers: [...b.headers], rows: b.rows.map((r) => [...r]) }
+        : { ...b });
+      const apply = (fn) => { const c = clone(); fn(c); onChange(c); };
+      const rowsOf = (s) => Math.max(2, (cellToText(s).match(/\n/g) || []).length + 1);
+      return html`
+        <div className="space-y-5">
+          ${blocks.map((b, bi) => b.type === "text"
+            ? html`<div key=${"t" + bi} className="bg-white rounded-2xl border border-slate-200 p-4">
+                <label className="block text-xs font-bold uppercase tracking-wide text-slate-400 mb-2">Heading / notes</label>
+                <textarea value=${b.text}
+                  onInput=${(e) => apply((c) => { c[bi].text = e.target.value; })}
+                  rows=${Math.max(2, (b.text.match(/\n/g) || []).length + 1)}
+                  className="w-full text-sm leading-relaxed bg-slate-50 rounded-xl p-3 border border-slate-200
+                             focus:outline-none focus:ring-2 focus:ring-blue-300"></textarea>
+              </div>`
+            : html`<div key=${"tb" + bi} className="bg-white rounded-2xl border border-blue-100 p-4">
+                <div className="flex items-center flex-wrap gap-2 mb-3">
+                  ${b.headers.map((h, hi) => html`
+                    <input key=${hi} value=${h}
+                      onInput=${(e) => apply((c) => { c[bi].headers[hi] = e.target.value; })}
+                      className="text-[11px] font-bold uppercase tracking-wide text-blue-700 bg-blue-50 rounded-lg px-2 py-1
+                                 border border-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300" />`)}
+                </div>
+                <div className="space-y-3">
+                  ${b.rows.map((row, ri) => html`
+                    <div key=${ri} className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+                      <div className="grid gap-3" style=${{ gridTemplateColumns: "repeat(" + b.headers.length + ", minmax(0,1fr))" }}>
+                        ${b.headers.map((h, ci) => html`
+                          <div key=${ci}>
+                            <label className="block text-[11px] font-semibold text-slate-500 mb-1">${h}</label>
+                            <textarea value=${cellToText(row[ci] || "")}
+                              placeholder="One item per line"
+                              onInput=${(e) => apply((c) => { c[bi].rows[ri][ci] = e.target.value; })}
+                              rows=${rowsOf(row[ci] || "")}
+                              className="w-full text-sm leading-relaxed bg-white rounded-lg p-2 border border-slate-200
+                                         focus:outline-none focus:ring-2 focus:ring-blue-300"></textarea>
+                          </div>`)}
+                      </div>
+                      <div className="flex justify-end mt-2">
+                        <button onClick=${() => apply((c) => { c[bi].rows.splice(ri, 1); })}
+                          className="text-xs font-semibold text-rose-500 hover:text-rose-700">Remove row</button>
+                      </div>
+                    </div>`)}
+                </div>
+                <button onClick=${() => apply((c) => { c[bi].rows.push(b.headers.map(() => "")); })}
+                  className="mt-3 text-sm font-semibold text-blue-600 hover:text-blue-800">+ Add row</button>
+              </div>`)}
+        </div>`;
+    }
+
+    /* ------------------------------------------------------------------ */
     /* Checklist (Ollama) tab                                             */
     /* ------------------------------------------------------------------ */
     function ChecklistTab({ deptKey, eqId, woIds, onOpenWo }) {
@@ -521,9 +699,16 @@
       const [err, setErr] = useState(null);
       const [info, setInfo] = useState(null);
       const [editing, setEditing] = useState(false);
-      const [draft, setDraft] = useState("");
+      const [editorMode, setEditorMode] = useState("form");  // "form" | "raw"
+      const [blocks, setBlocks] = useState([]);
+      const [rawDraft, setRawDraft] = useState("");
+      const [protectedEdit, setProtectedEdit] = useState(false);
+      const [gateAction, setGateAction] = useState(null);    // pending action while locked
       const ref = useRef(null);
       const base = "/api/departments/" + deptKey + "/machines/" + eqId + "/guide";
+
+      const isAuthed = () => !protectedEdit || !!getEditPw();
+      const requireAuth = (action) => { if (isAuthed()) action(); else setGateAction(() => action); };
 
       const load = useCallback(() => {
         setState({ loading: true });
@@ -531,12 +716,17 @@
       }, [base]);
 
       useEffect(() => { load(); setEditing(false); setInfo(null); setErr(null); }, [load]);
+      useEffect(() => { getJSON("/api/edit-auth").then((d) => setProtectedEdit(!!d.protected)).catch(() => {}); }, []);
+
+      // Any 401 means the stored password is missing/stale: drop it and re-prompt.
+      const handleLocked = () => { setEditPw(""); setErr("Editing is locked. Enter the shared edit password."); };
 
       const generate = useCallback(async () => {
         setBusy("generate"); setErr(null); setInfo(null);
         try {
-          const r = await fetch(API + base, { method: "POST" });
+          const r = await fetch(API + base, { method: "POST", headers: editHeaders() });
           const d = await r.json();
+          if (r.status === 401) { handleLocked(); return; }
           if (!r.ok) throw new Error(d.error || "generation failed");
           setState({ loading: false, ...d });
         } catch (e) { setErr(e.message); }
@@ -546,8 +736,9 @@
       const update = useCallback(async () => {
         setBusy("update"); setErr(null); setInfo(null);
         try {
-          const r = await fetch(API + base + "/update", { method: "POST" });
+          const r = await fetch(API + base + "/update", { method: "POST", headers: editHeaders() });
           const d = await r.json();
+          if (r.status === 401) { handleLocked(); return; }
           if (!r.ok) throw new Error(d.error || "update failed");
           setState({ loading: false, ...d });
           setInfo(d.updated
@@ -558,26 +749,38 @@
       }, [base]);
 
       const startEdit = useCallback(() => {
-        setDraft(state.markdown || "");
+        const md = state.markdown || "";
+        setBlocks(parseGuideBlocks(md));
+        setRawDraft(md);
+        setEditorMode("form");
         setEditing(true); setErr(null); setInfo(null);
       }, [state.markdown]);
 
+      const switchMode = (mode) => {
+        if (mode === editorMode) return;
+        if (mode === "raw") setRawDraft(blocksToGuideMarkdown(blocks));
+        else setBlocks(parseGuideBlocks(rawDraft));
+        setEditorMode(mode);
+      };
+
       const save = useCallback(async () => {
+        const markdown = editorMode === "raw" ? rawDraft : blocksToGuideMarkdown(blocks);
         setBusy("save"); setErr(null); setInfo(null);
         try {
           const r = await fetch(API + base, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ markdown: draft }),
+            headers: editHeaders({ "Content-Type": "application/json" }),
+            body: JSON.stringify({ markdown }),
           });
           const d = await r.json();
+          if (r.status === 401) { handleLocked(); return; }
           if (!r.ok) throw new Error(d.error || "save failed");
           setState({ loading: false, ...d });
           setEditing(false);
           setInfo("Your edits were saved.");
         } catch (e) { setErr(e.message); }
         finally { setBusy(null); }
-      }, [base, draft]);
+      }, [base, editorMode, rawDraft, blocks]);
 
       // Render markdown and linkify known WO numbers.
       const renderedHtml = state.markdown ? linkifyGuide(marked.parse(state.markdown), woIds) : "";
@@ -596,31 +799,48 @@
       if (state.loading) return html`<${Spinner} label="Loading checklist…" />`;
 
       const btn = "px-4 py-2 rounded-full text-sm font-semibold shadow-sm disabled:opacity-50";
+      const unlocked = protectedEdit && !!getEditPw();
 
       return html`
         <div>
+          ${gateAction && html`<${PasswordGate}
+            onCancel=${() => setGateAction(null)}
+            onUnlock=${() => { const a = gateAction; setGateAction(null); if (a) a(); }} />`}
+
           <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
-            <div className="text-sm text-slate-500">
+            <div className="text-sm text-slate-500 flex items-center gap-2">
               ${state.exists
                 ? html`Built from this machine's unscheduled work orders. Edits you make are kept when you update.`
                 : html`No checklist yet — generate one from the unscheduled work orders.`}
+              ${protectedEdit && html`<span className=${"text-[11px] px-2 py-0.5 rounded-full border " +
+                (unlocked ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-slate-100 text-slate-500 border-slate-200")}>
+                ${unlocked ? "🔓 Editing unlocked" : "🔒 Editing locked"}
+              </span>`}
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               ${!state.exists && html`
-                <button onClick=${generate} disabled=${!!busy} className=${btn + " bg-blue-600 hover:bg-blue-700 text-white"}>
+                <button onClick=${() => requireAuth(generate)} disabled=${!!busy} className=${btn + " bg-blue-600 hover:bg-blue-700 text-white"}>
                   ${busy === "generate" ? "Generating…" : "Generate Checklist"}
                 </button>`}
 
               ${state.exists && !editing && html`
-                <button onClick=${startEdit} disabled=${!!busy} className=${btn + " bg-white border border-blue-200 text-blue-700 hover:bg-blue-50"}>
+                <button onClick=${() => requireAuth(startEdit)} disabled=${!!busy} className=${btn + " bg-white border border-blue-200 text-blue-700 hover:bg-blue-50"}>
                   Edit
                 </button>
-                <button onClick=${update} disabled=${!!busy} title="Adds newly reported issues while keeping your edits"
+                <button onClick=${() => requireAuth(update)} disabled=${!!busy} title="Adds newly reported issues while keeping your edits"
                   className=${btn + " bg-blue-600 hover:bg-blue-700 text-white"}>
                   ${busy === "update" ? "Updating…" : "Update with new work orders"}
                 </button>`}
 
               ${editing && html`
+                <div className="inline-flex rounded-full border border-blue-200 bg-white p-0.5 text-xs font-semibold mr-1">
+                  ${["form", "raw"].map((mode) => html`
+                    <button key=${mode} onClick=${() => switchMode(mode)}
+                      className=${"px-3 py-1.5 rounded-full transition " +
+                        (editorMode === mode ? "bg-blue-600 text-white shadow-sm" : "text-slate-600 hover:text-blue-700")}>
+                      ${mode === "form" ? "Easy editor" : "Markdown"}
+                    </button>`)}
+                </div>
                 <button onClick=${() => setEditing(false)} disabled=${!!busy} className=${btn + " bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}>
                   Cancel
                 </button>
@@ -635,16 +855,22 @@
           ${busy && busy !== "save" && html`<${Spinner} label="Asking Ollama to analyze the work orders…" />`}
 
           ${editing
-            ? html`
-              <div>
-                <textarea value=${draft} onInput=${(e) => setDraft(e.target.value)} spellcheck=${false}
-                  className="w-full h-[60vh] font-mono text-sm leading-relaxed bg-white rounded-2xl p-4
-                             border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"></textarea>
-                <p className="text-xs text-slate-400 mt-2">
-                  Edit the Markdown above. Tables use the
-                  <code className="mx-1">| col | col |</code> format with <code>&lt;br&gt;</code> for line breaks inside a cell.
-                </p>
-              </div>`
+            ? (editorMode === "form"
+              ? html`<div>
+                  <p className="text-xs text-slate-400 mb-3">
+                    Type one item per line in each box — each line becomes its own bullet. Use <b>+ Add row</b> for a new issue.
+                  </p>
+                  <${GuideFormEditor} blocks=${blocks} onChange=${setBlocks} />
+                </div>`
+              : html`<div>
+                  <textarea value=${rawDraft} onInput=${(e) => setRawDraft(e.target.value)} spellcheck=${false}
+                    className="w-full h-[60vh] font-mono text-sm leading-relaxed bg-white rounded-2xl p-4
+                               border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"></textarea>
+                  <p className="text-xs text-slate-400 mt-2">
+                    Raw Markdown. Tables use the
+                    <code className="mx-1">| col | col |</code> format with <code>&lt;br&gt;</code> for line breaks inside a cell.
+                  </p>
+                </div>`)
             : state.exists
               ? html`<div ref=${ref} className="guide bg-white rounded-2xl p-6 shadow-sm border border-blue-100"
                        dangerouslySetInnerHTML=${{ __html: renderedHtml }}></div>`
@@ -801,9 +1027,11 @@
         </button>`;
     }
 
-    function WeekColumn({ def, week, bucket, showDept, deptLabels, onOpenWo }) {
+    function WeekColumn({ def, week, bucket, showDept, deptLabels, onOpenWo, typeFilter = "all" }) {
       const sch = bucket.scheduled || [];
       const uns = bucket.unscheduled || [];
+      const showSch = typeFilter !== "unscheduled";
+      const showUns = typeFilter !== "scheduled";
       return html`
         <section className=${"bg-slate-50 rounded-2xl border " + def.accent + " overflow-hidden flex flex-col"}>
           <div className=${"px-4 py-3 " + def.head}>
@@ -815,22 +1043,22 @@
             </div>
           </div>
           <div className="p-3 space-y-4 overflow-y-auto" style=${{ maxHeight: "62vh" }}>
-            <div>
+            ${showSch && html`<div>
               <div className="text-xs font-bold uppercase tracking-wide text-sky-600 mb-2">Scheduled (${sch.length})</div>
               <div className="space-y-2">
                 ${sch.length === 0
                   ? html`<div className="text-slate-400 text-xs italic">None</div>`
                   : sch.map((r) => html`<${WeekWORow} key=${"s" + r.wo_id} r=${r} showDept=${showDept} deptLabels=${deptLabels} onOpenWo=${onOpenWo} />`)}
               </div>
-            </div>
-            <div>
+            </div>`}
+            ${showUns && html`<div>
               <div className="text-xs font-bold uppercase tracking-wide text-rose-600 mb-2">Unscheduled (${uns.length})</div>
               <div className="space-y-2">
                 ${uns.length === 0
                   ? html`<div className="text-slate-400 text-xs italic">None</div>`
                   : uns.map((r) => html`<${WeekWORow} key=${"u" + r.wo_id} r=${r} showDept=${showDept} deptLabels=${deptLabels} onOpenWo=${onOpenWo} />`)}
               </div>
-            </div>
+            </div>`}
           </div>
         </section>`;
     }
@@ -838,7 +1066,7 @@
     // Pure presentational: renders the three week columns for whatever records
     // match `predicate`. Reused by the top-level tab, the department view and
     // the machine view.
-    function WeeklyPanels({ data, predicate, showDept, onOpenWo }) {
+    function WeeklyPanels({ data, predicate, showDept, onOpenWo, typeFilter = "all" }) {
       const deptLabels = {};
       data.departments.forEach((d) => { deptLabels[d.key] = d.label; });
       const buckets = buildBuckets(data, predicate);
@@ -847,7 +1075,7 @@
           ${WEEK_DEFS.map((def) => html`
             <${WeekColumn} key=${def.key} def=${def} week=${data.weeks[def.key]}
               bucket=${buckets[def.key]} showDept=${showDept}
-              deptLabels=${deptLabels} onOpenWo=${onOpenWo} />`)}
+              deptLabels=${deptLabels} onOpenWo=${onOpenWo} typeFilter=${typeFilter} />`)}
         </div>`;
     }
 
@@ -857,16 +1085,36 @@
     function EmbeddedWeekly({ predicate, showDept, onOpenWo, title, subtitle }) {
       const [data, setData] = useState(null);
       const [err, setErr] = useState(null);
+      const [typeFilter, setTypeFilter] = useState("all");
       useEffect(() => {
         getJSON("/api/weekly").then(setData).catch((e) => setErr(e.message));
       }, []);
       if (err) return html`<div className="text-rose-600 text-sm">${err}</div>`;
       if (!data) return html`<${Spinner} label="Loading weekly schedule…" />`;
+      const TYPE_TABS = [
+        { key: "all", label: "All" },
+        { key: "scheduled", label: "Scheduled" },
+        { key: "unscheduled", label: "Unscheduled" },
+      ];
       return html`
         <div className="fade-in">
-          ${title && html`<h2 className="text-lg font-extrabold text-slate-800">${title}</h2>`}
-          ${subtitle && html`<p className="text-slate-500 text-sm mb-4">${subtitle}</p>`}
-          <${WeeklyPanels} data=${data} predicate=${predicate} showDept=${showDept} onOpenWo=${onOpenWo} />
+          <div className="flex items-start justify-between flex-wrap gap-3 mb-4">
+            <div>
+              ${title && html`<h2 className="text-lg font-extrabold text-slate-800">${title}</h2>`}
+              ${subtitle && html`<p className="text-slate-500 text-sm">${subtitle}</p>`}
+            </div>
+            <div className="inline-flex rounded-full border border-blue-200 bg-white p-0.5 text-sm font-semibold">
+              ${TYPE_TABS.map((t) => html`
+                <button key=${t.key} onClick=${() => setTypeFilter(t.key)}
+                  className=${"px-4 py-1.5 rounded-full transition " +
+                    (typeFilter === t.key
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-600 hover:text-blue-700")}>
+                  ${t.label}
+                </button>`)}
+            </div>
+          </div>
+          <${WeeklyPanels} data=${data} predicate=${predicate} showDept=${showDept} onOpenWo=${onOpenWo} typeFilter=${typeFilter} />
         </div>`;
     }
 
@@ -874,6 +1122,7 @@
       const [data, setData] = useState(null);
       const [err, setErr] = useState(null);
       const [scope, setScope] = useState("all");
+      const [typeFilter, setTypeFilter] = useState("all");
 
       useEffect(() => {
         getJSON("/api/weekly").then(setData).catch((e) => setErr(e.message));
@@ -884,6 +1133,12 @@
 
       const predicate = scope === "all" ? () => true : (r) => r.department_key === scope;
 
+      const TYPE_TABS = [
+        { key: "all", label: "All" },
+        { key: "scheduled", label: "Scheduled" },
+        { key: "unscheduled", label: "Unscheduled" },
+      ];
+
       return html`
         <div className="fade-in">
           <${Breadcrumb} items=${[{ label: "BLA Division" }, { label: "Weekly Schedule" }]} />
@@ -892,14 +1147,26 @@
               <h1 className="text-2xl font-extrabold text-slate-800 mb-1">Weekly Work Order Schedule</h1>
               <p className="text-slate-500">Scheduled &amp; unscheduled work orders by week (Sunday → Sunday). Future weeks show scheduled work only.</p>
             </div>
-            <select value=${scope} onChange=${(e) => setScope(e.target.value)}
-              className="px-4 py-2 rounded-full border border-blue-200 bg-white text-sm font-semibold text-slate-700
-                         focus:outline-none focus:ring-2 focus:ring-blue-300">
-              <option value="all">All Departments (Overall)</option>
-              ${data.departments.map((d) => html`<option key=${d.key} value=${d.key}>${d.label}</option>`)}
-            </select>
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="inline-flex rounded-full border border-blue-200 bg-white p-0.5 text-sm font-semibold">
+                ${TYPE_TABS.map((t) => html`
+                  <button key=${t.key} onClick=${() => setTypeFilter(t.key)}
+                    className=${"px-4 py-1.5 rounded-full transition " +
+                      (typeFilter === t.key
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : "text-slate-600 hover:text-blue-700")}>
+                    ${t.label}
+                  </button>`)}
+              </div>
+              <select value=${scope} onChange=${(e) => setScope(e.target.value)}
+                className="px-4 py-2 rounded-full border border-blue-200 bg-white text-sm font-semibold text-slate-700
+                           focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <option value="all">All Departments (Overall)</option>
+                ${data.departments.map((d) => html`<option key=${d.key} value=${d.key}>${d.label}</option>`)}
+              </select>
+            </div>
           </div>
-          <${WeeklyPanels} data=${data} predicate=${predicate} showDept=${scope === "all"} onOpenWo=${onOpenWo} />
+          <${WeeklyPanels} data=${data} predicate=${predicate} showDept=${scope === "all"} onOpenWo=${onOpenWo} typeFilter=${typeFilter} />
         </div>`;
     }
 

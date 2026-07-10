@@ -52,6 +52,25 @@ MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 # a real cloud model, so pin a valid one here unless the user overrides it.
 ae.OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gpt-oss:120b")
 
+# Shared password that gates checklist editing (generate / edit-save / update).
+# Set EDIT_PASSWORD in the .env file. If it is left blank, editing stays OPEN
+# (unprotected) so a fresh install isn't accidentally locked out.
+EDIT_PASSWORD = os.environ.get("EDIT_PASSWORD", "").strip()
+
+
+def _edit_ok(req) -> bool:
+    """True if the request is allowed to modify checklists. When no password is
+    configured, editing is open. Otherwise the caller must supply the shared
+    password via the 'X-Edit-Password' header (or a 'password' JSON field)."""
+    if not EDIT_PASSWORD:
+        return True
+    supplied = (req.headers.get("X-Edit-Password") or "").strip()
+    if not supplied:
+        body = req.get_json(silent=True) or {}
+        supplied = (body.get("password") or "").strip()
+    return supplied == EDIT_PASSWORD
+
+
 os.makedirs(GUIDES_DIR, exist_ok=True)
 
 app = Flask(__name__, static_folder=WEBAPP_DIR, static_url_path="")
@@ -680,6 +699,28 @@ def api_reload():
 
 
 # --------------------------------------------------------------------------- #
+# Checklist edit authentication (shared password)
+# --------------------------------------------------------------------------- #
+@app.route("/api/edit-auth")
+def api_edit_auth_status():
+    """Tell the frontend whether checklist editing is password-protected so it
+    can decide whether to show the unlock prompt."""
+    return jsonify({"protected": bool(EDIT_PASSWORD)})
+
+
+@app.route("/api/verify-edit-password", methods=["POST"])
+def api_verify_edit_password():
+    """Validate the shared edit password (used to 'unlock' the edit controls)."""
+    if not EDIT_PASSWORD:
+        return jsonify({"ok": True, "protected": False})
+    body = request.get_json(silent=True) or {}
+    supplied = (body.get("password") or "").strip()
+    if supplied == EDIT_PASSWORD:
+        return jsonify({"ok": True})
+    return jsonify({"ok": False, "error": "Incorrect password"}), 401
+
+
+# --------------------------------------------------------------------------- #
 # Per-machine troubleshooting checklist (Ollama)
 # --------------------------------------------------------------------------- #
 @app.route("/api/departments/<dept_key>/machines/<eq_id>/guide")
@@ -697,6 +738,8 @@ def api_get_guide(dept_key, eq_id):
 
 @app.route("/api/departments/<dept_key>/machines/<eq_id>/guide", methods=["POST"])
 def api_generate_guide(dept_key, eq_id):
+    if not _edit_ok(request):
+        return jsonify({"error": "Editing is locked. Enter the shared edit password."}), 401
     if dept_key not in DEPARTMENTS:
         return jsonify({"error": "department not found"}), 404
     groups = _machine_groups(dept_key)
@@ -727,6 +770,8 @@ def api_generate_guide(dept_key, eq_id):
 @app.route("/api/departments/<dept_key>/machines/<eq_id>/guide", methods=["PUT"])
 def api_save_guide(dept_key, eq_id):
     """Save operator-edited Markdown for a machine's checklist."""
+    if not _edit_ok(request):
+        return jsonify({"error": "Editing is locked. Enter the shared edit password."}), 401
     body = request.get_json(silent=True) or {}
     markdown = body.get("markdown")
     if markdown is None:
@@ -747,6 +792,8 @@ def api_update_guide(dept_key, eq_id):
     """MERGE newly reported unscheduled work orders into the existing
     (operator-edited) checklist via the LLM, PRESERVING the human edits. The
     previous guide is backed up first so the merge is reversible."""
+    if not _edit_ok(request):
+        return jsonify({"error": "Editing is locked. Enter the shared edit password."}), 401
     if dept_key not in DEPARTMENTS:
         return jsonify({"error": "department not found"}), 404
     groups = _machine_groups(dept_key)
