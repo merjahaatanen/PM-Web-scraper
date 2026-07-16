@@ -707,6 +707,11 @@
       const ref = useRef(null);
       const base = "/api/departments/" + deptKey + "/machines/" + eqId + "/guide";
 
+      const [showHistory, setShowHistory] = useState(false);
+      const [versions, setVersions] = useState(null);
+      const [histBusy, setHistBusy] = useState(false);
+      const [viewing, setViewing] = useState(null);  // historical version being previewed
+
       const isAuthed = () => !protectedEdit || !!getEditPw();
       const requireAuth = (action) => { if (isAuthed()) action(); else setGateAction(() => action); };
 
@@ -715,7 +720,10 @@
         getJSON(base).then((d) => setState({ loading: false, ...d })).catch((e) => setErr(e.message));
       }, [base]);
 
-      useEffect(() => { load(); setEditing(false); setInfo(null); setErr(null); }, [load]);
+      useEffect(() => {
+        load(); setEditing(false); setInfo(null); setErr(null);
+        setViewing(null); setShowHistory(false); setVersions(null);
+      }, [load]);
       useEffect(() => { getJSON("/api/edit-auth").then((d) => setProtectedEdit(!!d.protected)).catch(() => {}); }, []);
 
       // Any 401 means the stored password is missing/stale: drop it and re-prompt.
@@ -782,8 +790,44 @@
         finally { setBusy(null); }
       }, [base, editorMode, rawDraft, blocks]);
 
+      const loadHistory = useCallback(() => {
+        setHistBusy(true);
+        getJSON(base + "/versions")
+          .then((d) => setVersions(d.versions || []))
+          .catch((e) => setErr(e.message))
+          .finally(() => setHistBusy(false));
+      }, [base]);
+
+      const openHistory = () => { setShowHistory(true); loadHistory(); };
+
+      const openVersion = useCallback(async (n) => {
+        setErr(null);
+        try { setViewing(await getJSON(base + "/versions/" + n)); }
+        catch (e) { setErr(e.message); }
+      }, [base]);
+
+      const restoreVersion = useCallback(async (n) => {
+        setBusy("restore"); setErr(null); setInfo(null);
+        try {
+          const r = await fetch(API + base + "/versions/" + n + "/restore", {
+            method: "POST",
+            headers: editHeaders({ "Content-Type": "application/json" }),
+            body: JSON.stringify({}),
+          });
+          const d = await r.json();
+          if (r.status === 401) { handleLocked(); return; }
+          if (!r.ok) throw new Error(d.error || "restore failed");
+          setState({ loading: false, ...d });
+          setViewing(null);
+          loadHistory();
+          setInfo("Restored version " + n + " as a new version.");
+        } catch (e) { setErr(e.message); }
+        finally { setBusy(null); }
+      }, [base, loadHistory]);
+
       // Render markdown and linkify known WO numbers.
       const renderedHtml = state.markdown ? linkifyGuide(marked.parse(state.markdown), woIds) : "";
+      const viewHtml = viewing ? linkifyGuide(marked.parse(viewing.content || ""), woIds) : "";
 
       useEffect(() => {
         const el = ref.current;
@@ -824,6 +868,10 @@
                 </button>`}
 
               ${state.exists && !editing && html`
+                <button onClick=${openHistory} disabled=${!!busy} title="See and restore previous versions"
+                  className=${btn + " bg-white border border-blue-200 text-blue-700 hover:bg-blue-50"}>
+                  History
+                </button>
                 <button onClick=${() => requireAuth(startEdit)} disabled=${!!busy} className=${btn + " bg-white border border-blue-200 text-blue-700 hover:bg-blue-50"}>
                   Edit
                 </button>
@@ -871,12 +919,94 @@
                     <code className="mx-1">| col | col |</code> format with <code>&lt;br&gt;</code> for line breaks inside a cell.
                   </p>
                 </div>`)
-            : state.exists
-              ? html`<div ref=${ref} className="guide bg-white rounded-2xl p-6 shadow-sm border border-blue-100"
-                       dangerouslySetInnerHTML=${{ __html: renderedHtml }}></div>`
-              : !busy && html`<div className="text-slate-400 bg-white rounded-2xl p-10 text-center border border-dashed border-blue-200">
-                   Click <b>Generate Checklist</b> to build an operator troubleshooting guide.</div>`}
+            : viewing
+              ? html`<div>
+                  <div className="flex items-center justify-between gap-3 flex-wrap bg-amber-50 border border-amber-200 text-amber-800 rounded-xl px-4 py-2.5 mb-3 text-sm">
+                    <span>Viewing <b>version ${viewing.version_number}</b> · ${viewing.source_label} · ${fmtVersionStamp(viewing.created_at)}
+                      <span className="opacity-70">(read-only)</span></span>
+                    <span className="flex gap-2">
+                      <button onClick=${() => setViewing(null)}
+                        className="px-3 py-1 rounded-full bg-white border border-amber-300 text-amber-700 hover:bg-amber-100 text-xs font-semibold">
+                        Back to current</button>
+                      <button onClick=${() => requireAuth(() => restoreVersion(viewing.version_number))} disabled=${!!busy}
+                        className="px-3 py-1 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold disabled:opacity-50">
+                        ${busy === "restore" ? "Restoring…" : "Restore this version"}</button>
+                    </span>
+                  </div>
+                  <div className="guide bg-white rounded-2xl p-6 shadow-sm border border-amber-200"
+                       dangerouslySetInnerHTML=${{ __html: viewHtml }}></div>
+                </div>`
+              : state.exists
+                ? html`<div ref=${ref} className="guide bg-white rounded-2xl p-6 shadow-sm border border-blue-100"
+                         dangerouslySetInnerHTML=${{ __html: renderedHtml }}></div>`
+                : !busy && html`<div className="text-slate-400 bg-white rounded-2xl p-10 text-center border border-dashed border-blue-200">
+                     Click <b>Generate Checklist</b> to build an operator troubleshooting guide.</div>`}
+
+          ${showHistory && html`
+            <div className="fixed inset-0 z-40" onClick=${() => setShowHistory(false)}>
+              <div className="absolute inset-0 bg-slate-900/20"></div>
+              <aside onClick=${(e) => e.stopPropagation()}
+                className="absolute top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl border-l border-blue-100 flex flex-col fade-in">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-blue-100">
+                  <div>
+                    <div className="font-extrabold text-slate-800">Version history</div>
+                    <div className="text-[11px] text-slate-400">Every change is saved automatically</div>
+                  </div>
+                  <button onClick=${() => setShowHistory(false)}
+                    className="w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 text-lg leading-none">×</button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-2">
+                  ${histBusy && html`<${Spinner} label="Loading history…" />`}
+                  ${versions && versions.length === 0 && !histBusy && html`
+                    <div className="text-slate-400 text-sm p-4 text-center">No versions recorded yet.</div>`}
+                  ${versions && versions.map((v, i) => {
+                    const isCurrent = i === 0;
+                    const active = viewing ? viewing.version_number === v.version_number : isCurrent;
+                    return html`
+                      <div key=${v.version_number}
+                        onClick=${() => (isCurrent ? setViewing(null) : openVersion(v.version_number))}
+                        className=${"rounded-xl border p-3 mb-2 cursor-pointer transition " +
+                          (active ? "border-blue-400 bg-blue-50" : "border-slate-100 hover:bg-slate-50")}>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-bold text-slate-700 text-sm">Version ${v.version_number}
+                            ${isCurrent && html`<span className="ml-1.5 text-[10px] uppercase tracking-wide font-semibold text-emerald-600">Current</span>`}
+                          </span>
+                          <span className=${"text-[10px] px-2 py-0.5 rounded-full font-semibold whitespace-nowrap " + sourceChip(v.source)}>${v.source_label}</span>
+                        </div>
+                        <div className="text-xs text-slate-500 mt-1">${fmtVersionStamp(v.created_at)}${v.author ? " · " + v.author : ""}</div>
+                        ${!isCurrent && html`
+                          <div className="mt-2 flex gap-3">
+                            <button onClick=${(e) => { e.stopPropagation(); openVersion(v.version_number); }}
+                              className="text-xs font-semibold text-blue-600 hover:underline">View</button>
+                            <button onClick=${(e) => { e.stopPropagation(); requireAuth(() => restoreVersion(v.version_number)); }}
+                              disabled=${!!busy}
+                              className="text-xs font-semibold text-emerald-600 hover:underline disabled:opacity-50">Restore</button>
+                          </div>`}
+                      </div>`;
+                  })}
+                </div>
+              </aside>
+            </div>`}
         </div>`;
+    }
+
+    // Format an ISO timestamp for the version list.
+    function fmtVersionStamp(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      return isNaN(d.getTime()) ? iso
+        : d.toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+    }
+
+    // Colored chip class per version source.
+    function sourceChip(source) {
+      switch (source) {
+        case "ai_generate": return "bg-blue-100 text-blue-700";
+        case "ai_update":   return "bg-indigo-100 text-indigo-700";
+        case "manual_edit": return "bg-amber-100 text-amber-700";
+        case "restore":     return "bg-emerald-100 text-emerald-700";
+        default:            return "bg-slate-100 text-slate-600";
+      }
     }
 
     function linkifyGuide(htmlStr, woIds) {

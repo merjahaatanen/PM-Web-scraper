@@ -35,6 +35,7 @@ import shutil
 from datetime import datetime
 
 import analyze_equipment as ae
+import version_store as vs
 
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 GUIDES_DIR = os.path.join(OUTPUT_DIR, "guides")
@@ -201,6 +202,36 @@ def build_edits_block(eq_id) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# Version history (SQLite, see version_store.py)
+# --------------------------------------------------------------------------- #
+def ensure_seeded(eq_id) -> None:
+    """Make sure the current on-disk checklist exists as version 1 in the store.
+    This backfills history for checklists that predate the version system so the
+    UI always has at least the current state to show."""
+    if vs.count(eq_id) == 0:
+        current = read_guide(eq_id)
+        if current is not None:
+            vs.add_version(eq_id, current, source="import")
+
+
+def record_version(eq_id, content: str, source: str, author: str = "") -> dict | None:
+    """Seed legacy content (if needed) then append a new version. No-op saves
+    (identical content) are ignored by the store."""
+    ensure_seeded(eq_id)
+    return vs.add_version(eq_id, content, source=source, author=author)
+
+
+def list_versions(eq_id) -> list[dict]:
+    ensure_seeded(eq_id)
+    return vs.list_versions(eq_id)
+
+
+def get_version(eq_id, version_number: int) -> dict | None:
+    ensure_seeded(eq_id)
+    return vs.get_version(eq_id, version_number)
+
+
+# --------------------------------------------------------------------------- #
 # New-record detection
 # --------------------------------------------------------------------------- #
 def new_records(records: list[dict], markdown: str) -> list[dict]:
@@ -217,12 +248,14 @@ def new_records(records: list[dict], markdown: str) -> list[dict]:
 # --------------------------------------------------------------------------- #
 # Generation / update
 # --------------------------------------------------------------------------- #
-def save_edit(eq_id, new_markdown: str, author: str = "") -> dict:
+def save_edit(eq_id, new_markdown: str, author: str = "", source: str = "manual_edit") -> dict:
     """Persist an operator-edited checklist: back up the old file, record the
-    manual-edit diff into the log, then write the new content."""
+    manual-edit diff into the log, save a new version, then write the new
+    content. `source` lets callers tag restores distinctly from manual edits."""
     old = read_guide(eq_id) or ""
     backup_guide(eq_id)
     record_edit(eq_id, old, new_markdown, author=author)
+    record_version(eq_id, new_markdown, source=source, author=author)
     _write(guide_path(eq_id), new_markdown)
     return {"markdown": new_markdown, "generated_at": os.path.getmtime(guide_path(eq_id))}
 
@@ -237,15 +270,19 @@ def generate_guide(eq_id, unscheduled: list[dict], label: str, model: str) -> st
     )
     markdown = ae.analyze(prompt, model)
     backup_guide(eq_id)
+    record_version(eq_id, markdown, source="ai_generate")
     _write(guide_path(eq_id), markdown)
     _write(baseline_path(eq_id), markdown)
     return markdown
 
 
 def update_guide(eq_id, unscheduled: list[dict], label: str, model: str) -> dict:
-    """MERGE newly reported unscheduled work orders into the existing checklist,
-    preserving operator edits. Falls back to a full generate when no checklist
-    exists yet. Returns {markdown, updated, new_count}."""
+    """Feed the LLM the LATEST checklist plus the newly reported unscheduled work
+    orders and ask whether anything needs to be ADDED (additions only, never
+    deletions). Manual edits are NOT re-injected into the prompt - the on-disk
+    checklist is already the latest version, and full change history is kept in
+    the version store. Falls back to a full generate when no checklist exists
+    yet. Returns {markdown, updated, new_count}."""
     existing = read_guide(eq_id)
     if existing is None:
         md = generate_guide(eq_id, unscheduled, label, model)
@@ -256,12 +293,10 @@ def update_guide(eq_id, unscheduled: list[dict], label: str, model: str) -> dict
     if not new:
         return {"markdown": existing, "updated": False, "new_count": 0}
 
-    stats = ae.build_stats(unscheduled)
-    prompt = ae.build_update_prompt(
-        existing, new, stats, label, operator_edits=build_edits_block(eq_id)
-    )
+    prompt = ae.build_update_prompt(existing, new, label=label)
     markdown = ae.analyze(prompt, model)
     backup_guide(eq_id)
+    record_version(eq_id, markdown, source="ai_update")
     _write(guide_path(eq_id), markdown)
     _write(baseline_path(eq_id), markdown)
     return {"markdown": markdown, "updated": True, "new_count": len(new)}

@@ -1013,6 +1013,47 @@ def api_update_guide(dept_key, eq_id):
 
 
 # --------------------------------------------------------------------------- #
+# Checklist version history (SQLite-backed, see version_store.py)
+# --------------------------------------------------------------------------- #
+@app.route("/api/departments/<dept_key>/machines/<eq_id>/guide/versions")
+def api_guide_versions(dept_key, eq_id):
+    """List every stored version of a machine's checklist, newest first."""
+    versions = ge.list_versions(eq_id)
+    current = versions[0]["version_number"] if versions else None
+    return jsonify({"eq_id": eq_id, "current_version": current, "versions": versions})
+
+
+@app.route("/api/departments/<dept_key>/machines/<eq_id>/guide/versions/<int:version_number>")
+def api_guide_version(dept_key, eq_id, version_number):
+    """Full content of a single historical version."""
+    v = ge.get_version(eq_id, version_number)
+    if v is None:
+        return jsonify({"error": "version not found"}), 404
+    return jsonify(v)
+
+
+@app.route("/api/departments/<dept_key>/machines/<eq_id>/guide/versions/<int:version_number>/restore",
+           methods=["POST"])
+def api_restore_guide_version(dept_key, eq_id, version_number):
+    """Restore an older version as the live checklist. This creates a NEW
+    version (tagged 'restore') rather than mutating history."""
+    if not _edit_ok(request):
+        return jsonify({"error": "Editing is locked. Enter the shared edit password."}), 401
+    v = ge.get_version(eq_id, version_number)
+    if v is None:
+        return jsonify({"error": "version not found"}), 404
+    body = request.get_json(silent=True) or {}
+    author = (body.get("author") or "").strip()
+    result = ge.save_edit(eq_id, v["content"], author=author, source="restore")
+    return jsonify({
+        "exists": True,
+        "markdown": result["markdown"],
+        "generated_at": result["generated_at"],
+        "restored_from": version_number,
+    })
+
+
+# --------------------------------------------------------------------------- #
 # Weekly work-order dashboard (Sunday -> Sunday weeks)
 # --------------------------------------------------------------------------- #
 def _week_starts(today: datetime | None = None):

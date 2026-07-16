@@ -262,37 +262,39 @@ GENERAL RULES:
 
 
 def build_update_prompt(existing_markdown: str, new_records: list[dict],
-                        stats: dict, label: str, operator_edits: str = "") -> str:
-    """Prompt that MERGES newly reported work orders into an operator-edited
-    checklist, preserving the human edits instead of rebuilding from scratch."""
+                        stats: dict = None, label: str = "",
+                        operator_edits: str = "") -> str:
+    """Prompt that feeds the model the LATEST checklist plus the new unscheduled
+    work orders and asks whether anything needs to be ADDED. Additions only -
+    never deletions. Manual edits are NOT re-injected: the on-disk checklist is
+    already the latest version, and full edit history lives in version_store.
+    `stats` / `operator_edits` are accepted for backwards-compatibility and
+    intentionally ignored."""
     compact = _compact_records(new_records)
-    edits_block = _operator_edits_section(operator_edits)
 
-    return f"""You are a senior maintenance technician UPDATING an existing
-operator TROUBLESHOOTING CHECKLIST for this equipment: {label}.
+    return f"""You are a senior maintenance technician maintaining an operator
+TROUBLESHOOTING CHECKLIST for this equipment: {label}.
 
-You are given (1) the operator's CURRENT checklist Markdown, which a human has
-reviewed and edited, and (2) NEW breakdown work orders reported since the
-checklist was last built. MERGE the new work orders into the existing checklist
-WITHOUT discarding the operator's edits.
+You are given (1) the CURRENT checklist Markdown (its latest version) and
+(2) NEW unscheduled work orders collected in the most recent scrape.
 
-=== CURRENT CHECKLIST (preserve this) ===
+=== CURRENT CHECKLIST ===
 {existing_markdown}
 
-=== NEW WORK ORDERS (JSON) ===
+=== NEW UNSCHEDULED WORK ORDERS (JSON) ===
 {json.dumps(compact, indent=2)}
 
-=== UPDATED STATISTICS (whole machine) ===
-{json.dumps(stats, indent=2)}
-{edits_block}
+Based on these new unscheduled work orders, does anything new need to be added to the checklist? If so, make those changes. Do not make any deletions.
+
 RULES:
-- PRESERVE the operator's existing wording, structure, Issue names, symptoms,
-  and steps. Do NOT rewrite or reorder existing content unless a new work order
-  clearly extends an existing Issue.
-- If a new work order fits an EXISTING Issue, add only the new symptom/step text
-  to that row, and append its WO number to that row's "Related Work Order #s".
-- If a new work order is a genuinely NEW failure mode not covered by any
-  existing Issue, add a NEW row to BOTH tables using the SAME Issue name in each.
+- ADDITIONS ONLY. Never delete, remove, reword, or reorder existing rows, Issue
+  names, symptoms, steps, or work-order numbers. Preserve all current content
+  exactly as written.
+- If a new work order fits an EXISTING Issue, append the new symptom/step text to
+  that row and add its WO number to that row's "Related Work Order #s".
+- If a new work order is a genuinely NEW failure mode not covered by any existing
+  Issue, add a NEW row to BOTH tables using the SAME Issue name in each.
+- If nothing new needs to be added, output the current checklist unchanged.
 - Keep the EXACT same two-table structure and column headers as the current
   checklist. Inside a table cell, put each item on its own line using a literal
   "<br>" and start each line with "- ". Never use real line breaks in a cell.
