@@ -886,9 +886,251 @@
     }
 
     /* ------------------------------------------------------------------ */
-    /* Machine view (4 tabs)                                              */
+    /* Trends tab (monthly timeline + SVG chart)                          */
     /* ------------------------------------------------------------------ */
-    const TABS = ["Dashboard", "Weekly", "Checklist", "Unscheduled", "Scheduled"];
+    // Metric metadata shared by the chart, the toggles and the month table.
+    const TREND_METRICS = [
+      { key: "material_cost",     label: "Material Cost",   fmt: money, color: "#2563eb" },
+      { key: "downtime_hours",    label: "Downtime",        fmt: hours, color: "#f59e0b" },
+      { key: "labor_time",        label: "Labor Time",      fmt: hours, color: "#c026d3" },
+      { key: "unscheduled_count", label: "Unscheduled WOs", fmt: num,   color: "#ef4444" },
+      { key: "scheduled_count",   label: "Scheduled WOs",   fmt: num,   color: "#10b981" },
+    ];
+    const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+    // Multi-line SVG chart. Each selected metric is scaled to its OWN range
+    // (0 -> that series' max) so lines with different units can be compared by
+    // shape on one plot.
+    function TrendChart({ months, selectedKeys, onPointClick }) {
+      const W = 680, H = 260, padL = 12, padR = 12, padT = 16, padB = 26;
+      const plotW = W - padL - padR, plotH = H - padT - padB;
+      const x = (i) => padL + (plotW * i) / 11;
+      const defs = TREND_METRICS.filter((m) => selectedKeys.includes(m.key));
+
+      if (defs.length === 0)
+        return html`<div className="h-64 flex items-center justify-center text-slate-400 text-sm text-center px-4">
+          Select a metric below to plot it month&#8209;to&#8209;month.</div>`;
+
+      const grid = [0, 0.25, 0.5, 0.75, 1].map((f, i) => {
+        const gy = padT + plotH * f;
+        return html`<line key=${"g" + i} x1=${padL} y1=${gy} x2=${W - padR} y2=${gy}
+          stroke="#e2e8f0" strokeWidth="1" />`;
+      });
+
+      const series = defs.map((m) => {
+        const vals = months.map((mo) => Number(mo[m.key]) || 0);
+        const max = Math.max(...vals, 0);
+        const y = (v) => (max <= 0 ? padT + plotH : padT + plotH * (1 - v / max));
+        const pts = vals.map((v, i) => x(i) + "," + y(v)).join(" ");
+        const dots = vals.map((v, i) => html`<circle key=${m.key + i} cx=${x(i)} cy=${y(v)} r="4"
+          fill=${m.color} style=${{ cursor: "pointer" }}
+          onClick=${(e) => { e.stopPropagation(); onPointClick && onPointClick(i + 1); }}>
+          <title>${MONTHS[i]} · ${m.label}: ${m.fmt(v)} — click for synopsis</title></circle>`);
+        return html`<g key=${m.key}>
+          <polyline points=${pts} fill="none" stroke=${m.color} strokeWidth="2.5"
+            strokeLinejoin="round" strokeLinecap="round" />
+          ${dots}
+        </g>`;
+      });
+
+      const xlabels = MONTHS.map((mo, i) => html`<text key=${"x" + i} x=${x(i)} y=${H - 8}
+        textAnchor="middle" fill="#94a3b8" style=${{ fontSize: "10px" }}>${mo}</text>`);
+
+      return html`
+        <svg viewBox=${"0 0 " + W + " " + H} className="w-full" style=${{ height: "260px" }}>
+          ${grid}${series}${xlabels}
+        </svg>`;
+    }
+
+    // Compact 12-month timeline. Column headers and cells toggle a metric on
+    // the chart; active columns are tinted with the metric colour.
+    function MonthTable({ months, selected, onToggle, onMonthClick }) {
+      return html`
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="text-left">
+                <th className="py-2 px-2 text-xs uppercase tracking-wide text-slate-400 font-semibold">Month</th>
+                ${TREND_METRICS.map((m) => {
+                  const on = selected.includes(m.key);
+                  return html`<th key=${m.key} onClick=${() => onToggle(m.key)}
+                    className="py-2 px-2 text-xs font-semibold cursor-pointer select-none whitespace-nowrap"
+                    style=${{ color: on ? m.color : "#94a3b8" }}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full" style=${{ backgroundColor: m.color, opacity: on ? 1 : 0.35 }}></span>
+                      ${m.label}
+                    </span></th>`;
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              ${months.map((mo) => html`
+                <tr key=${mo.month} className="border-t border-slate-100 hover:bg-blue-50/40">
+                  <td className="py-1.5 px-2">
+                    <button onClick=${() => onMonthClick && onMonthClick(mo.month)}
+                      className="font-medium text-blue-600 hover:underline" title="What drove this month?">
+                      ${MONTHS[mo.month - 1]}</button>
+                  </td>
+                  ${TREND_METRICS.map((m) => {
+                    const v = Number(mo[m.key]) || 0;
+                    const on = selected.includes(m.key);
+                    return html`<td key=${m.key} onClick=${() => onToggle(m.key)}
+                      className=${"py-1.5 px-2 cursor-pointer tabular-nums " + (v === 0 ? "text-slate-300" : "text-slate-700")}
+                      style=${on ? { backgroundColor: m.color + "14" } : {}}>${m.fmt(v)}</td>`;
+                  })}
+                </tr>`)}
+            </tbody>
+          </table>
+        </div>`;
+    }
+
+    function MonthSynopsisModal({ deptKey, eqId, machineName, year, month, onClose, onOpenWo }) {
+      const [data, setData] = useState(null);
+      const [err, setErr] = useState(null);
+      const ref = useRef(null);
+
+      useEffect(() => {
+        setData(null); setErr(null);
+        getJSON("/api/departments/" + deptKey + "/machines/" + eqId +
+          "/month-synopsis?year=" + year + "&month=" + month)
+          .then(setData).catch((e) => setErr(e.message));
+      }, [deptKey, eqId, year, month]);
+
+      const woIds = new Set((data && data.work_orders ? data.work_orders : []).map((w) => String(w.wo_id)));
+      const rendered = data && data.synopsis ? linkifyGuide(marked.parse(data.synopsis), woIds) : "";
+
+      useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const handler = (e) => {
+          const wo = e.target && e.target.dataset && e.target.dataset.wo;
+          if (wo) onOpenWo(wo);
+        };
+        el.addEventListener("click", handler);
+        return () => el.removeEventListener("click", handler);
+      }, [rendered, onOpenWo]);
+
+      return html`
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto"
+             onClick=${onClose}>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl my-8 fade-in"
+               onClick=${(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-blue-100 sticky top-0 bg-white rounded-t-3xl">
+              <div>
+                <div className="font-extrabold text-lg text-blue-700">${MONTHS[month - 1]} ${year}</div>
+                <div className="text-xs text-slate-400">${machineName} · AI synopsis</div>
+              </div>
+              <button onClick=${onClose}
+                className="w-9 h-9 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 text-xl leading-none">×</button>
+            </div>
+            <div className="p-6">
+              ${err && html`<div className="text-rose-600">${err}</div>`}
+              ${!data && !err && html`<${Spinner} label="Analyzing month…" />`}
+              ${data && html`
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-5">
+                  ${TREND_METRICS.map((m) => html`<div key=${m.key}
+                    className="rounded-xl border border-slate-100 p-2 text-center">
+                    <div className="text-[10px] uppercase tracking-wide font-semibold" style=${{ color: m.color }}>${m.label}</div>
+                    <div className="text-sm font-bold text-slate-700">${m.fmt(data.totals[m.key])}</div>
+                  </div>`)}
+                </div>
+                ${data.synopsis
+                  ? html`<div ref=${ref} className="guide" dangerouslySetInnerHTML=${{ __html: rendered }}></div>`
+                  : html`<div className="text-slate-400">No synopsis available.</div>`}`}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function YearSection({ yr, defaultOpen, deptKey, eqId, machineName, onOpenWo }) {
+      const [open, setOpen] = useState(!!defaultOpen);
+      const [selected, setSelected] = useState(["material_cost"]);
+      const [synMonth, setSynMonth] = useState(null);
+      const toggle = (k) =>
+        setSelected((s) => (s.includes(k) ? s.filter((x) => x !== k) : [...s, k]));
+      const woTotal = yr.totals.unscheduled_count + yr.totals.scheduled_count;
+
+      return html`
+        <${React.Fragment}>
+        <section className="bg-white rounded-2xl shadow-sm border border-blue-100 overflow-hidden">
+          <button onClick=${() => setOpen((o) => !o)}
+            className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-blue-50/50">
+            <div className="flex items-center gap-3">
+              <span className=${"text-blue-400 text-xs transition-transform " + (open ? "rotate-90" : "")}>▶</span>
+              <span className="text-lg font-extrabold text-slate-800">${yr.year}</span>
+            </div>
+            <div className="flex items-center gap-4 text-sm text-slate-500">
+              <span className="font-semibold text-slate-700">${money(yr.totals.material_cost)}</span>
+              <span className="hidden sm:inline">${hours(yr.totals.downtime_hours)} down</span>
+              <span className="hidden md:inline">${num(woTotal)} WOs</span>
+            </div>
+          </button>
+          ${open && html`
+            <div className="px-5 pb-5 pt-1 fade-in">
+              <${TrendChart} months=${yr.months} selectedKeys=${selected} onPointClick=${setSynMonth} />
+              <div className="flex flex-wrap gap-2 mt-3 mb-4">
+                ${TREND_METRICS.map((m) => {
+                  const on = selected.includes(m.key);
+                  return html`<button key=${m.key} onClick=${() => toggle(m.key)}
+                    className=${"flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border transition " +
+                      (on ? "text-white shadow" : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50")}
+                    style=${on ? { backgroundColor: m.color, borderColor: m.color } : {}}>
+                    <span className="w-2.5 h-2.5 rounded-full" style=${{ backgroundColor: on ? "#fff" : m.color }}></span>
+                    ${m.label}
+                  </button>`;
+                })}
+              </div>
+              <${MonthTable} months=${yr.months} selected=${selected} onToggle=${toggle} onMonthClick=${setSynMonth} />
+            </div>`}
+        </section>
+        ${synMonth && html`<${MonthSynopsisModal}
+          deptKey=${deptKey} eqId=${eqId} machineName=${machineName}
+          year=${yr.year} month=${synMonth}
+          onClose=${() => setSynMonth(null)} onOpenWo=${onOpenWo} />`}
+        </${React.Fragment}>`;
+    }
+
+    function TrendsTab({ deptKey, eqId, machineName, onOpenWo }) {
+      const [data, setData] = useState(null);
+      const [err, setErr] = useState(null);
+
+      useEffect(() => {
+        setData(null); setErr(null);
+        getJSON("/api/departments/" + deptKey + "/machines/" + eqId + "/trends")
+          .then(setData).catch((e) => setErr(e.message));
+      }, [deptKey, eqId]);
+
+      if (err) return html`<div className="text-rose-600">${err}</div>`;
+      if (!data) return html`<${Spinner} label="Loading trends…" />`;
+
+      const years = [...(data.years || [])].sort((a, b) => b.year - a.year);
+      if (years.length === 0)
+        return html`<div className="text-slate-400 py-8">No dated work orders to chart for ${machineName}.</div>`;
+
+      return html`
+        <div className="space-y-4">
+          <p className="text-slate-500 text-sm">
+            Monthly trends for <span className="font-semibold text-slate-700">${machineName}</span>.
+            Click a metric to plot it across the year; select several to compare
+            (each line is scaled to its own range). Click a point on the chart — or a
+            month name below — for an AI synopsis of what drove that month.
+          </p>
+          ${years.map((yr, i) => html`<${YearSection} key=${yr.year} yr=${yr} defaultOpen=${i === 0}
+            deptKey=${deptKey} eqId=${eqId} machineName=${machineName} onOpenWo=${onOpenWo} />`)}
+        </div>`;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* Machine view                                                       */
+    /* ------------------------------------------------------------------ */
+    const TABS = ["Dashboard", "Trends", "Weekly", "Checklist", "Unscheduled", "Scheduled"];
+
+    // Equipment IDs for which the Trends tab is enabled (the machines the team
+    // tracks trends on). All other machines hide the Trends tab.
+    const TRENDS_EQ_IDS = new Set([
+      "1361", "135", "1335", "1503", "5", "2063", "151", "1877", "1570",
+      "1724", "5273", "105", "1879", "5351", "154", "1584",
+    ]);
 
     function MachineView({ deptKey, eqId, deptLabel, onHome, onOpenDept, onOpenWo }) {
       const [data, setData] = useState(null);
@@ -909,6 +1151,9 @@
         [...(data.unscheduled || []), ...(data.scheduled || [])].map((r) => String(r.wo_id))
       );
 
+      // Only expose the Trends tab for the enabled machines.
+      const tabs = TABS.filter((t) => t !== "Trends" || TRENDS_EQ_IDS.has(String(eqId)));
+
       return html`
         <div className="fade-in">
           <${Breadcrumb} items=${[
@@ -924,7 +1169,7 @@
           </div>
 
           <div className="flex gap-2 mb-6 bg-white p-1.5 rounded-full shadow-sm border border-blue-100 w-fit flex-wrap">
-            ${TABS.map((t) => html`
+            ${tabs.map((t) => html`
               <button key=${t} onClick=${() => setTab(t)}
                 className=${"px-4 py-2 rounded-full text-sm font-semibold transition " +
                   (tab === t ? "bg-blue-600 text-white shadow" : "text-slate-500 hover:bg-blue-50")}>
@@ -940,6 +1185,11 @@
               <p className="text-slate-400 text-sm mt-4">
                 Quick view for ${m.name}. Use the tabs above for the troubleshooting checklist and full work-order details.
               </p>
+            </div>`}
+
+          ${tab === "Trends" && html`
+            <div className="fade-in">
+              <${TrendsTab} deptKey=${deptKey} eqId=${eqId} machineName=${m.name} onOpenWo=${onOpenWo} />
             </div>`}
 
           ${tab === "Weekly" && html`

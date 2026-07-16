@@ -315,14 +315,15 @@ _PS_SCRIPT = r"""
 param([Parameter(Mandatory=$true)][string]$BodyPath,
       [Parameter(Mandatory=$true)][string]$Model)
 $ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $key = $env:GEMINI_API_KEY
 if (-not $key) { $key = $env:GOOGLE_API_KEY }
 if (-not $key) { Write-Output '__GEMINI_ERROR__GEMINI_API_KEY not set'; exit 1 }
 $body = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Raw -Path $BodyPath))
 $uri = "https://generativelanguage.googleapis.com/v1beta/models/$Model`:generateContent?key=$key"
 try {
-    $r = Invoke-RestMethod -Uri $uri -Method Post -ContentType 'application/json; charset=utf-8' -Body $body -TimeoutSec 300
-    $r | ConvertTo-Json -Depth 40
+    $resp = Invoke-WebRequest -Uri $uri -Method Post -ContentType 'application/json; charset=utf-8' -Headers @{ "Accept-Encoding" = "identity" } -Body $body -TimeoutSec 300 -UseBasicParsing
+    [System.Console]::Out.Write([System.Text.Encoding]::UTF8.GetString($resp.RawContentStream.ToArray()))
 } catch {
     $msg = $_.ErrorDetails.Message
     if (-not $msg) { $msg = $_.Exception.Message }
@@ -339,13 +340,14 @@ _PS_SCRIPT_OPENAI = r"""
 param([Parameter(Mandatory=$true)][string]$BodyPath,
       [Parameter(Mandatory=$true)][string]$Uri)
 $ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $key = $env:OLLAMA_API_KEY
 if (-not $key) { Write-Output '__GEMINI_ERROR__OLLAMA_API_KEY not set'; exit 1 }
 $body = [System.Text.Encoding]::UTF8.GetBytes((Get-Content -Raw -Path $BodyPath))
-$headers = @{ "Authorization" = "Bearer $key" }
+$headers = @{ "Authorization" = "Bearer $key"; "Accept-Encoding" = "identity" }
 try {
-    $r = Invoke-RestMethod -Uri $Uri -Method Post -Headers $headers -ContentType 'application/json; charset=utf-8' -Body $body -TimeoutSec 300
-    $r | ConvertTo-Json -Depth 40
+    $resp = Invoke-WebRequest -Uri $Uri -Method Post -Headers $headers -ContentType 'application/json; charset=utf-8' -Body $body -TimeoutSec 300 -UseBasicParsing
+    [System.Console]::Out.Write([System.Text.Encoding]::UTF8.GetString($resp.RawContentStream.ToArray()))
 } catch {
     $msg = $_.ErrorDetails.Message
     if (-not $msg) { $msg = $_.Exception.Message }
@@ -402,7 +404,7 @@ def _analyze_ollama(prompt: str, model: str) -> str:
         result = subprocess.run(
             ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
              "-File", script_path, "-BodyPath", body_path, "-Uri", OLLAMA_URL],
-            capture_output=True, text=True, env=env,
+            capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
         )
     finally:
         for p in (body_path, script_path):
@@ -447,7 +449,7 @@ def _analyze_gemini(prompt: str, model: str) -> str:
         result = subprocess.run(
             ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
              "-File", script_path, "-BodyPath", body_path, "-Model", model],
-            capture_output=True, text=True, env=env,
+            capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
         )
     finally:
         for p in (body_path, script_path):

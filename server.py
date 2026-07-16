@@ -674,6 +674,198 @@ def api_machine(dept_key, eq_id):
 
 
 # --------------------------------------------------------------------------- #
+# Machine monthly trends (Trends tab)
+# --------------------------------------------------------------------------- #
+# Metrics surfaced per month. Unscheduled work orders are bucketed by
+# date_notified and scheduled by due_date (matching the rest of MINT).
+_TREND_METRICS = [
+    "material_cost", "downtime_hours", "labor_time",
+    "unscheduled_count", "scheduled_count",
+]
+
+
+def _empty_month(month: int) -> dict:
+    m = {k: 0 for k in _TREND_METRICS}
+    m["month"] = month
+    return m
+
+
+def _machine_trends(dept_key: str, eq_id: str) -> list[dict]:
+    """Aggregate a machine's work orders into per-year, per-month metrics.
+
+    Returns a list of {year, months:[12], totals} sorted oldest -> newest,
+    including only years that have at least one work order. Every year lists
+    all 12 months (empty months are zero-filled)."""
+    recs = _machine_groups(dept_key).get(eq_id) or {"unscheduled": [], "scheduled": []}
+
+    # (records, date_field, kind) so we bucket each list by the right date.
+    sources = [
+        (recs["unscheduled"], "date_notified", "unscheduled_count"),
+        (recs["scheduled"], "due_date", "scheduled_count"),
+    ]
+
+    years: dict[int, list[dict]] = {}
+    for records, date_field, count_key in sources:
+        for r in records:
+            dt = ae._parse_date(r.get(date_field))
+            if not dt:
+                continue
+            months = years.setdefault(dt.year, [_empty_month(i) for i in range(1, 13)])
+            cell = months[dt.month - 1]
+            cell["material_cost"] += ae._to_float(r.get("material_cost"))
+            cell["downtime_hours"] += ae._to_float(r.get("downtime_hours"))
+            cell["labor_time"] += ae._to_float(r.get("labor_time"))
+            cell[count_key] += 1
+
+    out = []
+    for year in sorted(years):
+        months = years[year]
+        for m in months:
+            m["material_cost"] = round(m["material_cost"], 2)
+            m["downtime_hours"] = round(m["downtime_hours"], 2)
+            m["labor_time"] = round(m["labor_time"], 2)
+        totals = {k: round(sum(m[k] for m in months), 2) for k in _TREND_METRICS}
+        out.append({"year": year, "months": months, "totals": totals})
+    return out
+
+
+@app.route("/api/departments/<dept_key>/machines/<eq_id>/trends")
+def api_machine_trends(dept_key, eq_id):
+    if dept_key not in DEPARTMENTS:
+        return jsonify({"error": "department not found"}), 404
+    eq_id = _num_id(eq_id)
+    return jsonify({
+        "eq_id": eq_id,
+        "metrics": _TREND_METRICS,
+        "years": _machine_trends(dept_key, eq_id),
+    })
+
+
+_MONTH_NAMES = ["", "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"]
+
+
+def _month_records(dept_key: str, eq_id: str, year: int, month: int) -> list[dict]:
+    """The machine's work orders that fall in a given year/month, tagged with
+    their kind. Unscheduled bucket by date_notified, scheduled by due_date."""
+    recs = _machine_groups(dept_key).get(eq_id) or {"unscheduled": [], "scheduled": []}
+    out = []
+    for records, date_field, kind in (
+        (recs["unscheduled"], "date_notified", "unscheduled"),
+        (recs["scheduled"], "due_date", "scheduled"),
+    ):
+        for r in records:
+            dt = ae._parse_date(r.get(date_field))
+            if dt and dt.year == year and dt.month == month:
+                out.append({"kind": kind, "date_field": date_field, "rec": r})
+    return out
+
+
+def _build_month_synopsis_prompt(label, year, month, tagged, totals) -> str:
+    compact = [
+        {
+            "wo_id": t["rec"].get("wo_id"),
+            "type": t["kind"],
+            "date": t["rec"].get(t["date_field"]),
+            "completed": t["rec"].get("completed_datetime"),
+            "urgency": t["rec"].get("urgency"),
+            "status": t["rec"].get("status"),
+            "problem": t["rec"].get("problem"),
+            "material_cost": t["rec"].get("material_cost"),
+            "labor_time": t["rec"].get("labor_time"),
+            "downtime_hours": t["rec"].get("downtime_hours"),
+            "work_performed_by": t["rec"].get("work_performed_by"),
+            "comments": t["rec"].get("comments"),
+        }
+        for t in tagged
+    ]
+    return f"""You are a reliability / maintenance analyst. In a SHORT synopsis,
+explain what drove the maintenance numbers for {label} during {_MONTH_NAMES[month]} {year}.
+
+Focus on the biggest cost and downtime drivers - for example a breakdown that
+required an expensive part, or a repair that took the machine down for a long
+time. Use the 'problem' text for the symptom and the 'comments' text for what was
+actually done / what parts were replaced.
+
+=== MONTH TOTALS ===
+{json.dumps(totals, indent=2)}
+
+=== WORK ORDERS THIS MONTH (JSON) ===
+{json.dumps(compact, indent=2)}
+
+Write concise Markdown with EXACTLY this structure:
+
+1. A 2-3 sentence **summary** of what happened this month and why the stats look
+   the way they do (call out whether it was a quiet month or driven by one/two
+   big events).
+2. A "**Key drivers**" bulleted list. For each notable event give the WO number,
+   the cost and/or downtime, and a one-line plain-English reason
+   (e.g. "WO 19912 - $4,188 spindle bearing replacement after the saw seized").
+
+RULES:
+- Be specific and cite bare WO numbers and dollar/hour figures from the data.
+- Do NOT invent parts, costs, or causes that are not supported by the text.
+- If material cost, downtime, or labor was essentially zero, say the month was
+  routine rather than manufacturing a dramatic cause.
+- Keep it tight - no preamble, headings, or disclaimers beyond what is asked.
+"""
+
+
+@app.route("/api/departments/<dept_key>/machines/<eq_id>/month-synopsis")
+def api_month_synopsis(dept_key, eq_id):
+    """LLM synopsis of what drove a specific month's stats for a machine."""
+    if dept_key not in DEPARTMENTS:
+        return jsonify({"error": "department not found"}), 404
+    try:
+        year = int(request.args.get("year", ""))
+        month = int(request.args.get("month", ""))
+    except (TypeError, ValueError):
+        return jsonify({"error": "numeric 'year' and 'month' query params required"}), 400
+    if not (1 <= month <= 12):
+        return jsonify({"error": "month must be 1-12"}), 400
+
+    eq_id = _num_id(eq_id)
+    tagged = _month_records(dept_key, eq_id, year, month)
+
+    totals = {
+        "material_cost": round(sum(ae._to_float(t["rec"].get("material_cost")) for t in tagged), 2),
+        "downtime_hours": round(sum(ae._to_float(t["rec"].get("downtime_hours")) for t in tagged), 2),
+        "labor_time": round(sum(ae._to_float(t["rec"].get("labor_time")) for t in tagged), 2),
+        "unscheduled_count": sum(1 for t in tagged if t["kind"] == "unscheduled"),
+        "scheduled_count": sum(1 for t in tagged if t["kind"] == "scheduled"),
+    }
+    work_orders = [
+        {
+            "wo_id": t["rec"].get("wo_id"),
+            "wo_type": t["kind"],
+            "date": t["rec"].get(t["date_field"]),
+            "problem": t["rec"].get("problem"),
+            "material_cost": t["rec"].get("material_cost"),
+            "downtime_hours": t["rec"].get("downtime_hours"),
+            "labor_time": t["rec"].get("labor_time"),
+            "status": t["rec"].get("status"),
+        }
+        for t in tagged
+    ]
+
+    base = {"year": year, "month": month, "month_name": _MONTH_NAMES[month],
+            "totals": totals, "work_orders": work_orders}
+
+    if not tagged:
+        base["synopsis"] = f"No work orders were recorded for {_MONTH_NAMES[month]} {year}."
+        return jsonify(base)
+
+    recs = _machine_groups(dept_key).get(eq_id) or {"unscheduled": [], "scheduled": []}
+    label = f"{_machine_name(recs['unscheduled'] + recs['scheduled'])} ({_eq_label(recs['unscheduled'] + recs['scheduled'], eq_id)})"
+    prompt = _build_month_synopsis_prompt(label, year, month, tagged, totals)
+    try:
+        base["synopsis"] = ae.analyze(prompt, MODEL)
+    except SystemExit as e:  # analyze() calls sys.exit on failure
+        return jsonify({"error": str(e)}), 502
+    return jsonify(base)
+
+
+# --------------------------------------------------------------------------- #
 # Work order detail
 # --------------------------------------------------------------------------- #
 @app.route("/api/workorder/<wo_id>")
